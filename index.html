@@ -1,9 +1,14 @@
 <!DOCTYPE html>
-<html data-version="1777999546" lang="zh-CN">
+<html data-version="1778250333" lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>三木不为森 · 南山帖</title>
+    <meta property="og:title" content="南山帖 · 三木不为森">
+    <meta property="og:description" content="南山有四季，四季有十二客">
+    <meta property="og:image" content="https://bai-cha.coze.cn/images/share-default.png">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
@@ -329,18 +334,20 @@
             position: absolute;
             top: 28px; right: 28px;
             padding: 9px 20px;
-            font-size: 13px;
+            font-size: 14px;
             font-family: inherit;
-            color: rgba(166, 146, 114, 0.5);
+            color: rgba(255, 255, 255, 0.6);
             background: transparent;
-            border: 1px solid rgba(166, 146, 114, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 18px;
             cursor: pointer;
             letter-spacing: 0.1em;
             z-index: 20;
             transition: all 0.3s ease;
+            opacity: 0;
         }
-        .skip-btn:hover { color: rgba(166, 146, 114, 0.9); border-color: rgba(166, 146, 114, 0.4); }
+        .skip-btn:hover { color: rgba(255, 255, 255, 0.9); border-color: rgba(255, 255, 255, 0.4); }
+        .skip-btn.show { opacity: 1; }
 
         /* ========== 圣杯仪式弹窗 ========== */
         .shengbei-dialog {
@@ -1178,7 +1185,224 @@
             line-height: 1.5;
         }
     
-    </style>
+        /* 以茶寄意 - 送礼推荐入口 */
+        .gift-guide-banner {
+            margin: 30px 20px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(212, 182, 138, 0.12), rgba(212, 182, 138, 0.05));
+            border: 1px solid rgba(212, 182, 138, 0.25);
+            border-radius: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .gift-guide-banner:hover {
+            background: linear-gradient(135deg, rgba(212, 182, 138, 0.18), rgba(212, 182, 138, 0.08));
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 182, 138, 0.15);
+        }
+        .gift-guide-banner-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        .gift-guide-banner-text {
+            font-size: 14px;
+            color: var(--dark);
+            letter-spacing: 0.1em;
+        }
+        .gift-guide-banner-hint {
+            font-size: 11px;
+            color: var(--light);
+            margin-top: 4px;
+        }
+        
+        /* 以茶寄意 - 弹窗 */
+        .gift-guide-modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg);
+            display: none;
+            flex-direction: column;
+            z-index: 300;
+            overflow-y: auto;
+        }
+        .gift-guide-modal.show {
+            display: flex;
+        }
+        .gift-guide-header {
+            position: sticky;
+            top: 0;
+            background: var(--bg);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(212, 182, 138, 0.2);
+            z-index: 1;
+        }
+        .gift-guide-close {
+            position: absolute;
+            top: 15px; right: 15px;
+            width: 36px; height: 36px;
+            background: rgba(212, 182, 138, 0.15);
+            border: 1px solid rgba(212, 182, 138, 0.3);
+            border-radius: 50%;
+            font-size: 20px;
+            color: var(--light);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .gift-guide-title {
+            font-size: 22px;
+            color: var(--dark);
+            letter-spacing: 0.3em;
+            font-family: "STSong", "SimSun", serif;
+        }
+        .gift-guide-subtitle {
+            font-size: 12px;
+            color: var(--light);
+            margin-top: 6px;
+        }
+        .gift-guide-content {
+            padding: 25px 20px 80px;
+            max-width: 400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        /* 关系选择 */
+        .gift-guide-section {
+            margin-bottom: 25px;
+        }
+        .gift-guide-section-label {
+            font-size: 12px;
+            color: var(--light);
+            letter-spacing: 0.2em;
+            margin-bottom: 12px;
+        }
+        .gift-guide-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .gift-guide-option {
+            padding: 10px 20px;
+            border: 1px solid rgba(212, 182, 138, 0.4);
+            border-radius: 22px;
+            font-size: 14px;
+            color: var(--dark);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .gift-guide-option.selected {
+            background: var(--dark);
+            color: white;
+            border-color: var(--dark);
+        }
+        
+        /* 推荐结果 */
+        .gift-guide-result {
+            margin-top: 30px;
+            display: none;
+        }
+        .gift-guide-result.show {
+            display: block;
+        }
+        .gift-guide-result-title {
+            font-size: 14px;
+            color: var(--gold);
+            letter-spacing: 0.15em;
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(212, 182, 138, 0.2);
+        }
+        .gift-guide-recommended {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .gift-guide-card {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(212, 182, 138, 0.3);
+            border-radius: 14px;
+            padding: 18px;
+            display: flex;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .gift-guide-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(212, 182, 138, 0.2);
+        }
+        .gift-guide-card-img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+        .gift-guide-card-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .gift-guide-card-name {
+            font-size: 16px;
+            color: var(--dark);
+            letter-spacing: 0.15em;
+            font-family: "STSong", "SimSun", serif;
+        }
+        .gift-guide-card-tea {
+            font-size: 12px;
+            color: var(--light);
+            margin: 4px 0;
+        }
+        .gift-guide-card-reason {
+            font-size: 12px;
+            color: var(--dark);
+            line-height: 1.5;
+            opacity: 0.8;
+        }
+        
+        /* 推荐按钮 */
+        .gift-guide-action {
+            margin-top: 25px;
+            text-align: center;
+        }
+        .gift-guide-btn {
+            padding: 14px 40px;
+            background: linear-gradient(145deg, var(--gold), #C4A67A);
+            border: none;
+            border-radius: 25px;
+            font-size: 15px;
+            color: white;
+            letter-spacing: 0.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: none;
+        }
+        .gift-guide-btn.show {
+            display: inline-block;
+        }
+        .gift-guide-btn:active {
+            transform: scale(0.96);
+        }
+        
+        /* 回访用户问候语 */
+        .yimu-greeting {
+            text-align: center;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+        }
+        .yimu-greeting-text {
+            font-size: 15px;
+            color: rgba(245, 240, 230, 0.85);
+            letter-spacing: 0.15em;
+        }
+
+        </style>
 </head>
 <body>
     <div class="toast" id="toast"></div>
@@ -1259,7 +1483,7 @@
         <!-- 输入区 -->
         <div class="intro-input-section" id="introInputSection">
             <div class="intro-label">南山山客 ·</div>
-            <input type="text" class="intro-input" id="userNameInput" placeholder="输入你的名字" maxlength="10">
+            <input type="text" class="intro-input" id="userNameInput" placeholder="留下你的山客名（可不填）" maxlength="10">
             <button class="intro-btn" id="introBtn" onclick="goToYimu()">进入南山</button>
         </div>
     </div>
@@ -1270,8 +1494,52 @@
             <div class="yimu-title">一 木</div>
             <div class="yimu-subtitle">缘起一木，盲选今日茶运</div>
         </div>
+        <div class="yimu-greeting" id="yimuGreeting" style="display:none;">
+            <div class="yimu-greeting-text" id="yimuGreetingText"></div>
+        </div>
         <div class="guests-grid" id="guestsGrid"></div>
         <div class="yimu-hint">轻触山客，开启今日茶运</div>
+        <div class="gift-guide-banner" onclick="openGiftGuide()">
+            <div class="gift-guide-banner-icon">🎁</div>
+            <div class="gift-guide-banner-text">不知道选哪款？以茶寄意</div>
+            <div class="gift-guide-banner-hint">根据关系与场景，为你推荐</div>
+        </div>
+    </div>
+
+    <!-- 以茶寄意 - 送礼推荐弹窗 -->
+    <div class="gift-guide-modal" id="giftGuideModal">
+        <div class="gift-guide-header">
+            <button class="gift-guide-close" onclick="closeGiftGuide()">×</button>
+            <div class="gift-guide-title">以茶寄意</div>
+            <div class="gift-guide-subtitle">选择关系与场景，为你推荐</div>
+        </div>
+        <div class="gift-guide-content">
+            <div class="gift-guide-section">
+                <div class="gift-guide-section-label">选择关系</div>
+                <div class="gift-guide-options" id="relationOptions">
+                    <button class="gift-guide-option" data-value="长辈">长辈</button>
+                    <button class="gift-guide-option" data-value="朋友">朋友</button>
+                    <button class="gift-guide-option" data-value="客户">客户</button>
+                    <button class="gift-guide-option" data-value="恋人">恋人</button>
+                </div>
+            </div>
+            <div class="gift-guide-section">
+                <div class="gift-guide-section-label">选择场景</div>
+                <div class="gift-guide-options" id="occasionOptions">
+                    <button class="gift-guide-option" data-value="节日">节日</button>
+                    <button class="gift-guide-option" data-value="感谢">感谢</button>
+                    <button class="gift-guide-option" data-value="问候">问候</button>
+                    <button class="gift-guide-option" data-value="祝贺">祝贺</button>
+                </div>
+            </div>
+            <div class="gift-guide-result" id="giftGuideResult">
+                <div class="gift-guide-result-title">为你推荐</div>
+                <div class="gift-guide-recommended" id="giftGuideRecommended"></div>
+            </div>
+            <div class="gift-guide-action">
+                <button class="gift-guide-btn" id="giftGuideBtn" onclick="contactUs()">结缘此茶</button>
+            </div>
+        </div>
     </div>
 
     <!-- ========== 掷杯（已废弃，不再使用） ========== -->
@@ -1866,6 +2134,7 @@
         let isRotating = true;
         let resultAction = '';
         let introEnded = false;
+        let introStartTime = Date.now(); // 开篇动画开始时间，用于计算跳过时间
 
         /* ================================================================
          * 开篇动画 - 纯笔墨书法
@@ -1882,8 +2151,10 @@
         const introBtn = document.getElementById('introBtn');
         const userNameInput = document.getElementById('userNameInput');
 
+        // 名字输入可选，按钮始终可点击
+        introBtn.classList.add('show');
         userNameInput.addEventListener('input', () => {
-            introBtn.classList.toggle('show', userNameInput.value.trim().length > 0);
+            // 按钮始终显示（已通过上面的classList.add）
         });
 
         function playIntroAnimation() {
@@ -1923,22 +2194,28 @@
                 introPoem.classList.remove('fade-out');
                 // 显示输入框，背景干净无文字
                 introInputSection.classList.add('show');
+                // 埋点：开篇动画自然播放完毕
+                track('intro_complete', { skipped: false });
             }, 7000);
         }
 
         function skipIntro() {
             if (introEnded) return;
+            const skipTime = Math.round((Date.now() - introStartTime) / 1000);
             introEnded = true;
+            // 埋点：用户点击跳过
+            track('intro_skip', { skip_time: skipTime });
             // 跳过动画，隐藏所有开篇元素，直接进入山客选择页
             introPage.style.display = 'none';
             enterYimuPage();
         }
         
-        // 输入名字后进入圣杯仪式
+        // 输入名字后进入圣杯仪式（名字可选）
         function goToYimu() {
             const name = userNameInput.value.trim();
-            if (!name) { userNameInput.focus(); return; }
-            currentUserName = name;
+            currentUserName = name || '无名山客';
+            // 保存用户名到localStorage用于回访识别
+            localStorage.setItem('nanshantie_user', currentUserName);
             introEnded = true;
             introPage.classList.add('ended');
             setTimeout(() => {
@@ -2063,6 +2340,18 @@
         }
         
         function enterYimuPage() {
+            // 检查是否需要显示回访用户问候语
+            const savedName = localStorage.getItem('nanshantie_user');
+            const greetingEl = document.getElementById('yimuGreeting');
+            const greetingTextEl = document.getElementById('yimuGreetingText');
+            if (savedName && savedName !== '无名山客') {
+                greetingTextEl.textContent = savedName + '，今日茶运如何？';
+                greetingEl.style.display = 'block';
+            } else if (savedName === '无名山客') {
+                greetingTextEl.textContent = '山客，今日茶运如何？';
+                greetingEl.style.display = 'block';
+            }
+            
             document.getElementById('yimuPage').classList.add('active');
             document.getElementById('navBar').style.display = 'flex';
             renderGuests();
@@ -2076,6 +2365,13 @@
         // 选择山客后直接进入签文结果页（不再掷杯）
         function selectGuest(product) {
             selectedProduct = product;
+            
+            // 埋点：用户点击山客卡片
+            track('guest_click', {
+                guest_id: product.id,
+                guest_name: product.name,
+                season: product.season
+            });
             
             // 关闭所有弹窗，确保圣杯页面不残留
             closeShengbeiDialog();
@@ -2138,7 +2434,7 @@
             const fortune = selectedProduct.fortunes[Math.floor(Math.random() * selectedProduct.fortunes.length)];
 
             document.getElementById('resultDate').textContent = getDate() + ' · 今日茶运';
-            document.getElementById('resultUser').textContent = '南山山客 · ' + currentUserName;
+            document.getElementById('resultUser').textContent = currentUserName ? '南山山客 · ' + currentUserName : '';
             document.getElementById('guestTitle').textContent = selectedProduct.name;
             document.getElementById('teaTitle').textContent = selectedProduct.teaName;
             document.getElementById('stars').textContent = '★'.repeat(fortune.stars) + '☆'.repeat(5 - fortune.stars);
@@ -2160,6 +2456,25 @@
 
             // 直接显示签文结果页
             document.getElementById('resultPage').classList.add('active');
+            
+            // 更新微信分享标题
+            const shareTitle = currentUserName + '抽到了【' + selectedProduct.name + '·' + selectedProduct.teaName + '】—— 南山帖';
+            document.title = shareTitle;
+            
+            // 更新og标签
+            updateShareMeta(selectedProduct);
+        }
+
+        // 更新分享meta标签
+        function updateShareMeta(product) {
+            const ogTitle = document.querySelector('meta[property="og:title"]');
+            const ogDesc = document.querySelector('meta[property="og:description"]');
+            if (ogTitle) {
+                ogTitle.setAttribute('content', document.title);
+            }
+            if (ogDesc && product && product.flavor) {
+                ogDesc.setAttribute('content', product.flavor.substring(0, 30));
+            }
         }
 
         function backToYimu() {
@@ -2527,10 +2842,223 @@
             ctx.fillText(line, x, currentY);
         }
 
+
+        /* ================================================================
+         * 数据埋点
+         * ================================================================ */
+        function track(event, data = {}) {
+            const payload = { event, timestamp: Date.now(), ...data };
+            console.log('[track]', payload);
+            // TODO: 替换为实际埋点服务
+            // fetch('https://analytics.example.com/track', { method: 'POST', body: JSON.stringify(payload) });
+        }
+
+        /* ================================================================
+         * 回访用户识别 - 初始化检查
+         * ================================================================ */
+        function checkReturnUser() {
+            const savedName = localStorage.getItem('nanshantie_user');
+            if (savedName) {
+                // 回访用户，跳过开篇动画
+                introEnded = true;
+                introPage.style.display = 'none';
+                // 显示问候语
+                const greetingEl = document.getElementById('yimuGreeting');
+                const greetingTextEl = document.getElementById('yimuGreetingText');
+                if (savedName !== '无名山客') {
+                    greetingTextEl.textContent = savedName + '，今日茶运如何？';
+                } else {
+                    greetingTextEl.textContent = '山客，今日茶运如何？';
+                }
+                greetingEl.style.display = 'block';
+                // 直接进入一木页
+                enterYimuPage();
+                return true;
+            }
+            return false;
+        }
+
+        /* ================================================================
+         * 以茶寄意 - 送礼推荐
+         * ================================================================ */
+        const GIFT_GUIDE_RULES = {
+            '长辈-节日': { guest_id: 'lvshuang', guest_name: '履霜·工夫红茶', reason: '冬日暖意，长辈安好' },
+            '长辈-感谢': { guest_id: 'banjian', guest_name: '半见·陈皮白茶', reason: '陈韵温厚，恩情亦然' },
+            '长辈-问候': { guest_id: 'tongmeng', guest_name: '童濛·白毫银针', reason: '至纯至鲜，敬最珍重的人' },
+            '长辈-祝贺': { guest_id: 'nanshan', guest_name: '南山·21马年茶饼', reason: '岁月成饼，贺长久之喜' },
+            '朋友-节日': { guest_id: 'buqi', guest_name: '不器·白牡丹', reason: '不拘形器，正好对饮' },
+            '朋友-感谢': { guest_id: 'guilan', guest_name: '桂兰·肉桂', reason: '辛锐芬芳，记你的爽利' },
+            '朋友-问候': { guest_id: 'fulan', guest_name: '浮岚·高山绿茶', reason: '一口山岚，如见故人' },
+            '朋友-祝贺': { guest_id: 'dangui', guest_name: '丹桂·桂花红茶', reason: '桂开报喜，正合此刻' },
+            '客户-节日': { guest_id: 'tianxiang', guest_name: '天香·大红袍', reason: '岩骨花香，礼重于形' },
+            '客户-感谢': { guest_id: 'buzhi', guest_name: '步止·12年白茶饼', reason: '十二载沉淀，谢十二年信任' },
+            '客户-问候': { guest_id: 'shuxue', guest_name: '漱雪·茉莉绿茶', reason: '茉莉初雪，恰到好处的关心' },
+            '客户-祝贺': { guest_id: 'wuji', guest_name: '无羁·17年白茶饼', reason: '自在无羁，贺你破局前行' },
+            '恋人-节日': { guest_id: 'shuyue', guest_name: '漱月·茉莉红茶', reason: '月下茉莉，浪漫不必言说' },
+            '恋人-感谢': { guest_id: 'moli', guest_name: '莫离·茉莉银针', reason: '茉莉不离，寸心相许' },
+            '恋人-问候': { guest_id: 'tingzong', guest_name: '听枞·老枞', reason: '百年枞韵，念你如常' },
+            '恋人-祝贺': { guest_id: 'dangui', guest_name: '丹桂·桂花红茶', reason: '桂花逢喜，好事成双' }
+        };
+
+        let selectedRelation = '';
+        let selectedOccasion = '';
+        let recommendedProducts = [];
+
+        function openGiftGuide() {
+            // 重置选择
+            selectedRelation = '';
+            selectedOccasion = '';
+            recommendedProducts = [];
+            document.getElementById('relationOptions').querySelectorAll('.gift-guide-option').forEach(btn => btn.classList.remove('selected'));
+            document.getElementById('occasionOptions').querySelectorAll('.gift-guide-option').forEach(btn => btn.classList.remove('selected'));
+            document.getElementById('giftGuideResult').classList.remove('show');
+            document.getElementById('giftGuideBtn').classList.remove('show');
+            document.getElementById('giftGuideModal').classList.add('show');
+        }
+
+        function closeGiftGuide() {
+            document.getElementById('giftGuideModal').classList.remove('show');
+        }
+
+        function handleRelationSelect(btn) {
+            selectedRelation = btn.dataset.value;
+            document.getElementById('relationOptions').querySelectorAll('.gift-guide-option').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            updateGiftRecommendation();
+        }
+
+        function handleOccasionSelect(btn) {
+            selectedOccasion = btn.dataset.value;
+            document.getElementById('occasionOptions').querySelectorAll('.gift-guide-option').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            updateGiftRecommendation();
+        }
+
+        function updateGiftRecommendation() {
+            if (!selectedRelation || !selectedOccasion) return;
+            
+            const key = selectedRelation + '-' + selectedOccasion;
+            const rule = GIFT_GUIDE_RULES[key];
+            if (!rule) return;
+            
+            // 查找对应的产品
+            recommendedProducts = PRODUCTS.filter(p => p.id === rule.guest_id || p.name === rule.guest_name.split('·')[0]);
+            
+            // 如果没找到精确匹配，根据guest_name中的名称模糊匹配
+            if (recommendedProducts.length === 0) {
+                const targetName = rule.guest_name.split('·')[0];
+                recommendedProducts = PRODUCTS.filter(p => p.name === targetName);
+            }
+            
+            // 如果还是没找到，提供一个默认推荐
+            if (recommendedProducts.length === 0) {
+                recommendedProducts = [PRODUCTS.find(p => p.name === '不器') || PRODUCTS[0]];
+            }
+            
+            // 渲染推荐卡片
+            const container = document.getElementById('giftGuideRecommended');
+            container.innerHTML = recommendedProducts.slice(0, 2).map(p => `
+                <div class="gift-guide-card" onclick="selectGiftProduct('${p.id}')">
+                    <img class="gift-guide-card-img" src="${p.portrait}" alt="${p.name}">
+                    <div class="gift-guide-card-info">
+                        <div class="gift-guide-card-name">${p.name}</div>
+                        <div class="gift-guide-card-tea">${p.teaName}</div>
+                        <div class="gift-guide-card-reason">${rule.reason}</div>
+                    </div>
+                </div>
+            `).join('');
+            
+            // 显示推荐结果和按钮
+            document.getElementById('giftGuideResult').classList.add('show');
+            document.getElementById('giftGuideBtn').classList.add('show');
+            
+            // 埋点：送礼推荐结果
+            track('gift_guide', {
+                relation: selectedRelation,
+                occasion: selectedOccasion,
+                recommended: recommendedProducts.slice(0, 2).map(p => p.id)
+            });
+        }
+
+        function selectGiftProduct(productId) {
+            const product = PRODUCTS.find(p => p.id === productId);
+            if (product) {
+                closeGiftGuide();
+                // 使用推荐的产品
+                selectGuest(product);
+            }
+        }
+
+        // 初始化送礼推荐选项点击事件
+        function initGiftGuideOptions() {
+            document.getElementById('relationOptions').querySelectorAll('.gift-guide-option').forEach(btn => {
+                btn.onclick = () => handleRelationSelect(btn);
+            });
+            document.getElementById('occasionOptions').querySelectorAll('.gift-guide-option').forEach(btn => {
+                btn.onclick = () => handleOccasionSelect(btn);
+            });
+        }
+
+        /* ================================================================
+         * 修改分享函数添加埋点
+         * ================================================================ */
+        const originalShareResult = shareResult;
+        shareResult = async function() {
+            track('fortune_share', {
+                guest_id: selectedProduct?.id,
+                guest_name: selectedProduct?.name,
+                share_method: 'canvas'
+            });
+            return originalShareResult();
+        };
+
+        /* ================================================================
+         * 修改contactUs添加埋点
+         * ================================================================ */
+        const originalContactUs = contactUs;
+        contactUs = function() {
+            track('contact_click', {
+                guest_id: selectedProduct?.id,
+                guest_name: selectedProduct?.name,
+                source: 'result'
+            });
+            return originalContactUs();
+        };
+
+        /* ================================================================
+         * 产品详情页分享标题更新
+         * ================================================================ */
+        const originalOpenProductDetail = openProductDetail;
+        openProductDetail = function(product) {
+            originalOpenProductDetail(product);
+            // 更新页面标题
+            document.title = '【' + product.name + '·' + product.teaName + '】—— 南山帖';
+            // 更新og:description
+            const ogDesc = document.querySelector('meta[property="og:description"]');
+            if (ogDesc) {
+                ogDesc.setAttribute('content', product.flavor.substring(0, 30));
+            }
+        };
+
+
         /* ================================================================
          * 初始化
          * ================================================================ */
-        window.onload = () => PRODUCTS.forEach(p => { const img = new Image(); img.src = p.image; });
+        window.onload = () => {
+            // 预加载图片
+            PRODUCTS.forEach(p => { const img = new Image(); img.src = p.image; });
+            // 初始化送礼推荐选项
+            initGiftGuideOptions();
+            // 检查回访用户
+            setTimeout(() => {
+                if (!checkReturnUser()) {
+                    // 非回访用户，显示跳过按钮（0.5秒后）
+                    setTimeout(() => {
+                        document.querySelector('.skip-btn').classList.add('show');
+                    }, 500);
+                }
+            }, 100);
+        };
     </script>
 </body>
 </html>
