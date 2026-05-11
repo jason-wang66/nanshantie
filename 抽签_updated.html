@@ -1,0 +1,2206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>三木不为森 · 南山帖</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #F5F0E6;
+            --gold: #D4B68A;
+            --dark: #5C4A3A;
+            --light: #A69272;
+            --white: #FFFFFF;
+            --ink: #1a1a1a;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background: var(--ink);
+            min-height: 100vh;
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+        .page { display: none; min-height: 100vh; }
+        .page.active { display: block; }
+
+        /* ========== 开篇：纯笔墨书法 ========== */
+        .intro-page {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #0a0a0a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            overflow: hidden;
+        }
+        .intro-page.ended { animation: fadeOut 1.5s ease forwards; }
+        @keyframes fadeOut { to { opacity: 0; pointer-events: none; visibility: hidden; } }
+
+        /* 墨滴容器 */
+        .ink-drop-container {
+            position: absolute;
+            top: 8%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 8px;
+        }
+        .ink-drop {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #4a4a4a, #1a1a1a);
+            animation: dropFall 1.2s ease-in forwards;
+            box-shadow: 
+                0 0 10px rgba(26, 26, 26, 0.8),
+                0 0 30px rgba(26, 26, 26, 0.4);
+        }
+        @keyframes dropFall {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            70% { transform: translateY(calc(40vh)) scale(1.5); opacity: 1; }
+            100% { transform: translateY(calc(42vh)) scale(0); opacity: 0; }
+        }
+
+        /* 墨迹溅散 */
+        .ink-splash {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(26,26,26,0.95) 0%, rgba(26,26,26,0.4) 40%, transparent 70%);
+            opacity: 0;
+            z-index: 1;
+        }
+        .ink-splash.show {
+            animation: splashExpand 1.5s ease-out forwards;
+        }
+        @keyframes splashExpand {
+            0% { width: 0; height: 0; opacity: 0; }
+            15% { width: 20px; height: 20px; opacity: 1; }
+            100% { width: 500px; height: 500px; opacity: 0.7; }
+        }
+
+        /* 书写区域 - 每个字符分时出现，绝对定位 */
+        .calligraphy-area {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 单字书写 - 统一居中 */
+        .single-char {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: "STSong", "SimSun", "Noto Serif SC", serif;
+            font-size: 200px;
+            color: transparent;
+            opacity: 0;
+            text-shadow: none;
+            letter-spacing: 0;
+            z-index: 2;
+            pointer-events: none;
+        }
+        .single-char svg {
+            width: 280px;
+            height: 280px;
+        }
+        .single-char path {
+            fill: none;
+            stroke: #e8e0d0;
+            stroke-width: 12;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        
+        /* 一字书写 */
+        .char-yi path { stroke-dasharray: 280; stroke-dashoffset: 280; }
+        .char-yi.show path { animation: writeStroke 0.8s ease-out forwards; }
+        .char-yi.show { opacity: 1; }
+        @keyframes writeStroke {
+            0% { stroke-dashoffset: 280; opacity: 0; }
+            10% { stroke-dashoffset: 280; opacity: 1; }
+            100% { stroke-dashoffset: 0; opacity: 1; }
+        }
+
+        /* 二字书写 */
+        .char-er path { stroke-dasharray: 280; stroke-dashoffset: 280; }
+        .char-er path:nth-child(1) { }
+        .char-er.show path { animation: writeStroke2 0.5s ease-out forwards; }
+        .char-er.show path:nth-child(2) { animation-delay: 0.4s; }
+        .char-er.show { opacity: 1; }
+        @keyframes writeStroke2 {
+            0% { stroke-dashoffset: 280; opacity: 0; }
+            10% { stroke-dashoffset: 280; opacity: 1; }
+            100% { stroke-dashoffset: 0; opacity: 1; }
+        }
+
+        /* 三字书写 */
+        .char-san path { stroke-dasharray: 280; stroke-dashoffset: 280; }
+        .char-san.show path { animation: writeStroke3 0.4s ease-out forwards; }
+        .char-san.show path:nth-child(2) { animation-delay: 0.3s; }
+        .char-san.show path:nth-child(3) { animation-delay: 0.6s; }
+        .char-san.show { opacity: 1; }
+        @keyframes writeStroke3 {
+            0% { stroke-dashoffset: 280; opacity: 0; }
+            10% { stroke-dashoffset: 280; opacity: 1; }
+            100% { stroke-dashoffset: 0; opacity: 1; }
+        }
+
+        /* 单字淡出消失 */
+        .single-char.fade-out {
+            animation: charFadeOut 1s ease-out forwards;
+        }
+        @keyframes charFadeOut {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* 三木不为森 - 单独占一层，屏幕中央 */
+        .sanmu-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            opacity: 0;
+            z-index: 3;
+            pointer-events: none;
+        }
+        .sanmu-container.show {
+            opacity: 1;
+        }
+        .sanmu-container.fade-out {
+            animation: charFadeOut 1s ease-out forwards;
+        }
+        .sanmu-char {
+            font-family: "STSong", "SimSun", "Noto Serif SC", serif;
+            font-size: 80px;
+            color: #e8e0d0;
+            letter-spacing: 0.6em;
+            text-shadow: 
+                0 0 40px rgba(212, 182, 138, 0.4),
+                0 0 80px rgba(212, 182, 138, 0.2);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        .sanmu-container.show .sanmu-char {
+            animation: charSlideIn 0.6s ease-out forwards;
+        }
+        .sanmu-container.show .sanmu-char:nth-child(1) { animation-delay: 0s; }
+        .sanmu-container.show .sanmu-char:nth-child(2) { animation-delay: 0.15s; }
+        .sanmu-container.show .sanmu-char:nth-child(3) { animation-delay: 0.3s; }
+        .sanmu-container.show .sanmu-char:nth-child(4) { animation-delay: 0.45s; }
+        .sanmu-container.show .sanmu-char:nth-child(5) { animation-delay: 0.6s; }
+        @keyframes charSlideIn {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 南山帖标题 - 居中偏上 */
+        .intro-brand {
+            position: absolute;
+            top: 38%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            opacity: 0;
+            z-index: 4;
+            pointer-events: none;
+        }
+        .intro-brand.show {
+            opacity: 1;
+        }
+        .intro-brand.fade-out {
+            animation: charFadeOut 1s ease-out forwards;
+        }
+        .intro-brand h1 {
+            font-size: 88px;
+            color: rgba(232, 224, 208, 0.98);
+            letter-spacing: 0.7em;
+            font-family: "STSong", "SimSun", "Noto Serif SC", serif;
+            text-shadow: 
+                0 0 50px rgba(212, 182, 138, 0.6),
+                0 0 100px rgba(212, 182, 138, 0.3);
+            margin-bottom: 20px;
+        }
+        .intro-brand p {
+            font-size: 18px;
+            color: rgba(166, 146, 114, 0.85);
+            letter-spacing: 0.6em;
+        }
+        
+        /* 南山有四季，四季有十二客 - 竖排 */
+        .intro-poem {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            gap: 6px;
+            opacity: 0;
+            z-index: 4;
+            pointer-events: none;
+        }
+        .intro-poem.show {
+            opacity: 1;
+        }
+        .intro-poem.fade-out {
+            animation: charFadeOut 1s ease-out forwards;
+        }
+        .intro-poem .poem-char {
+            font-size: 22px;
+            color: rgba(212, 182, 138, 0.85);
+            font-family: "STSong", "SimSun", "Noto Serif SC", serif;
+            text-shadow: 0 0 30px rgba(212, 182, 138, 0.3);
+            writing-mode: vertical-rl;
+            letter-spacing: 0.5em;
+            line-height: 1.8;
+        }
+
+        /* 输入区 - 抬高到屏幕上1/3处，避免被键盘遮挡 */
+        .intro-input-section {
+            position: fixed;
+            top: 28%;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            opacity: 0;
+            z-index: 5;
+            width: 100%;
+            padding: 0 20px;
+        }
+        .intro-input-section.show {
+            animation: fadeUp 1.5s ease forwards;
+        }
+        @keyframes fadeUp { 
+            0% { opacity: 0; transform: translateX(-50%) translateY(30px); } 
+            100% { opacity: 1; transform: translateX(-50%) translateY(0); } 
+        }
+        .intro-label { font-size: 16px; color: rgba(166, 146, 114, 0.9); letter-spacing: 0.5em; margin-bottom: 24px; }
+        .intro-input {
+            width: 260px;
+            padding: 18px 28px;
+            font-size: 20px;
+            font-family: inherit;
+            color: rgba(232, 224, 208, 0.98);
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(212, 182, 138, 0.35);
+            border-radius: 35px;
+            text-align: center;
+            outline: none;
+            transition: all 0.4s ease;
+            letter-spacing: 4px;
+        }
+        .intro-input::placeholder { color: rgba(166, 146, 114, 0.5); font-size: 17px; }
+        .intro-input:focus { border-color: rgba(212, 182, 138, 0.65); background: rgba(255, 255, 255, 0.09); }
+        .intro-btn {
+            display: block;
+            margin: 30px auto 0;
+            padding: 18px 55px;
+            font-size: 17px;
+            font-family: inherit;
+            color: rgba(20, 20, 20, 0.92);
+            background: linear-gradient(145deg, rgba(232, 213, 183, 0.98), rgba(212, 182, 138, 0.98));
+            border: none;
+            border-radius: 35px;
+            cursor: pointer;
+            letter-spacing: 0.45em;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: all 0.4s ease;
+            box-shadow: 0 6px 35px rgba(0,0,0,0.5);
+        }
+        .intro-btn.show { opacity: 1; transform: translateY(0); }
+        .intro-btn:active { transform: scale(0.96); }
+        .skip-btn {
+            position: absolute;
+            top: 28px; right: 28px;
+            padding: 9px 20px;
+            font-size: 13px;
+            font-family: inherit;
+            color: rgba(166, 146, 114, 0.5);
+            background: transparent;
+            border: 1px solid rgba(166, 146, 114, 0.2);
+            border-radius: 18px;
+            cursor: pointer;
+            letter-spacing: 0.1em;
+            z-index: 20;
+            transition: all 0.3s ease;
+        }
+        .skip-btn:hover { color: rgba(166, 146, 114, 0.9); border-color: rgba(166, 146, 114, 0.4); }
+
+        /* ========== 圣杯仪式弹窗 ========== */
+        .shengbei-dialog {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(10, 10, 10, 0.97);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        .shengbei-dialog.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .shengbei-title {
+            font-family: "STSong", "SimSun", serif;
+            font-size: 42px;
+            color: #e8e0d0;
+            letter-spacing: 0.4em;
+            margin-bottom: 16px;
+            text-shadow: 0 0 30px rgba(212, 182, 138, 0.4);
+        }
+        .shengbei-subtitle {
+            font-size: 15px;
+            color: rgba(166, 146, 114, 0.7);
+            letter-spacing: 0.3em;
+            margin-bottom: 60px;
+        }
+        .shengbei-cups {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        .shengbei-cup {
+            width: 90px;
+            height: 130px;
+            background: linear-gradient(160deg, #A67C52 0%, #8B6914 30%, #6B4F3A 60%, #5A3D2B 100%);
+            border-radius: 12px 12px 45px 45px;
+            box-shadow: 
+                inset 0 3px 6px rgba(255,255,255,0.15),
+                inset 0 -5px 15px rgba(0,0,0,0.3),
+                0 12px 30px rgba(0,0,0,0.6),
+                0 0 0 3px rgba(212, 182, 138, 0.3),
+                0 0 40px rgba(212, 182, 138, 0.1);
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.3s ease;
+        }
+        /* 木纹纹理 */
+        .shengbei-cup::before {
+            content: '';
+            position: absolute;
+            top: 8px; left: 8px; right: 8px; bottom: 15px;
+            background: repeating-linear-gradient(
+                180deg,
+                transparent,
+                transparent 4px,
+                rgba(90, 61, 43, 0.3) 4px,
+                rgba(90, 61, 43, 0.3) 5px
+            );
+            border-radius: 8px 8px 38px 38px;
+            pointer-events: none;
+        }
+        /* 顶部高光 */
+        .shengbei-cup::after {
+            content: '';
+            position: absolute;
+            top: 10px; left: 15px; right: 20px;
+            height: 40px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.2), transparent);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .shengbei-cup.yang {
+            background: linear-gradient(160deg, #C9A86C 0%, #A67C52 30%, #8B6914 60%, #6B5210 100%);
+        }
+        .shengbei-cup.yang .cup-text {
+            color: #5C4A3A;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.3);
+        }
+        .shengbei-cup.yin {
+            background: linear-gradient(160deg, #6B4F3A 0%, #5A3D2B 40%, #3D2A1A 100%);
+        }
+        .shengbei-cup.yin .cup-text {
+            color: #A69272;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+        .cup-text {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 38px;
+            font-family: "STSong", serif;
+            font-weight: bold;
+        }
+        @keyframes cupFlip {
+            0% { transform: translateY(0) rotateX(0) rotateY(0) rotateZ(0); }
+            15% { transform: translateY(-60px) rotateX(90deg) rotateY(30deg) rotateZ(45deg); }
+            30% { transform: translateY(-100px) rotateX(180deg) rotateY(60deg) rotateZ(90deg); }
+            45% { transform: translateY(-80px) rotateX(270deg) rotateY(120deg) rotateZ(150deg); }
+            60% { transform: translateY(-40px) rotateX(360deg) rotateY(180deg) rotateZ(200deg); }
+            75% { transform: translateY(-20px) rotateX(450deg) rotateY(270deg) rotateZ(270deg); }
+            85% { transform: translateY(-10px) rotateX(540deg) rotateY(320deg) rotateZ(320deg); }
+            92% { transform: translateY(-5px) rotateX(600deg) rotateY(340deg) rotateZ(340deg); }
+            100% { transform: translateY(0) rotateX(720deg) rotateY(360deg) rotateZ(360deg); }
+        }
+        .shengbei-result {
+            font-family: "STSong", "SimSun", serif;
+            font-size: 48px;
+            letter-spacing: 0.3em;
+            margin-bottom: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .shengbei-result.show { opacity: 1; }
+        .shengbei-result.shengbei-success { color: #D4B68A; text-shadow: 0 0 30px rgba(212, 182, 138, 0.5); }
+        .shengbei-result.shengbei-retry { color: #A69272; }
+        .shengbei-result.shengbei-fail { color: #666; }
+        .shengbei-hint {
+            font-size: 16px;
+            color: rgba(166, 146, 114, 0.8);
+            letter-spacing: 0.2em;
+        }
+        .shengbei-btn {
+            margin-top: 40px;
+            padding: 16px 50px;
+            font-size: 18px;
+            color: rgba(20, 20, 20, 0.9);
+            background: linear-gradient(145deg, rgba(232, 213, 183, 0.98), rgba(212, 182, 138, 0.98));
+            border: none;
+            border-radius: 35px;
+            cursor: pointer;
+            letter-spacing: 0.4em;
+            box-shadow: 0 6px 30px rgba(0,0,0,0.4);
+            transition: transform 0.2s ease;
+        }
+        .shengbei-btn:active { transform: scale(0.96); }
+
+        /* ========== 极简底部导航 ========== */
+        .nav-bar {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(15px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px 0;
+            gap: 50px;
+            z-index: 100;
+            border-top: 1px solid rgba(212, 182, 138, 0.1);
+        }
+        .nav-dot {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 5px 15px;
+            transition: all 0.3s ease;
+        }
+        .nav-dot .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(166, 146, 114, 0.3); margin-bottom: 6px; transition: all 0.3s ease; }
+        .nav-dot.active .dot { background: var(--gold); box-shadow: 0 0 10px rgba(212, 182, 138, 0.5); }
+        .nav-dot .label { font-size: 10px; color: rgba(166, 146, 114, 0.5); letter-spacing: 0.15em; transition: all 0.3s ease; }
+        .nav-dot.active .label { color: var(--gold); }
+
+        /* ========== 一木：山客形象 ========== */
+        .yimu-page { background: var(--ink); padding: 60px 20px 100px; }
+        .yimu-header { text-align: center; margin-bottom: 40px; }
+        .yimu-title { font-size: 26px; color: rgba(245, 240, 230, 0.9); letter-spacing: 0.4em; margin-bottom: 8px; font-family: "STSong", "SimSun", serif; }
+        .yimu-subtitle { font-size: 13px; color: rgba(166, 146, 114, 0.6); letter-spacing: 0.2em; }
+
+        .guests-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            max-width: 380px;
+            margin: 0 auto;
+        }
+        .guest-card {
+            position: relative;
+            aspect-ratio: 3/4;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.4s ease;
+        }
+        .guest-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 50%, rgba(26, 26, 26, 0.8) 100%);
+            z-index: 1;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+        }
+        .guest-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(212, 182, 138, 0.2); }
+        .guest-card:hover::before { opacity: 0.4; }
+        .guest-card img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            filter: brightness(0.8) contrast(1.1);
+            transition: all 0.4s ease;
+        }
+        .guest-card:hover img { filter: brightness(0.9) contrast(1.05); }
+        .guest-card-info {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            padding: 20px 15px;
+            z-index: 2;
+        }
+        .guest-card-name { font-size: 18px; color: rgba(245, 240, 230, 0.95); letter-spacing: 0.2em; margin-bottom: 4px; font-family: "STSong", "SimSun", serif; }
+        .guest-card-season { font-size: 11px; color: rgba(212, 182, 138, 0.7); letter-spacing: 0.15em; }
+        .guest-card-glow {
+            position: absolute;
+            inset: -2px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(212, 182, 138, 0.3), transparent, rgba(212, 182, 138, 0.1));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: -1;
+        }
+        .guest-card:hover .guest-card-glow { opacity: 1; }
+
+        .yimu-hint { text-align: center; font-size: 12px; color: rgba(166, 146, 114, 0.5); margin-top: 30px; letter-spacing: 0.15em; }
+
+        /* ========== 掷杯：写实圣杯 ========== */
+        .divination-page { background: var(--ink); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 40px 20px; }
+        .divination-page.active { display: flex; }
+        .div-guest { font-size: 22px; color: rgba(245, 240, 230, 0.9); letter-spacing: 0.3em; margin-bottom: 6px; font-family: "STSong", "SimSun", serif; }
+        .div-tea { font-size: 13px; color: rgba(166, 146, 114, 0.6); letter-spacing: 0.2em; margin-bottom: 50px; }
+
+        /* 圣杯区域 */
+        .bei-area {
+            position: relative;
+            width: 280px;
+            height: 180px;
+            margin-bottom: 50px;
+        }
+        .bei {
+            position: absolute;
+            width: 70px;
+            height: 120px;
+            top: 30px;
+        }
+        .bei-left { left: 40px; }
+        .bei-right { right: 40px; }
+        
+        /* 写实圣杯SVG */
+        .bei-body {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            perspective: 600px;
+        }
+        .bei-half {
+            position: absolute;
+            width: 70px;
+            height: 60px;
+            border-radius: 35px;
+            backface-visibility: hidden;
+        }
+        
+        /* 阳面（平面朝上） */
+        .bei-yang {
+            top: 0;
+            background: linear-gradient(160deg, #D4B68A 0%, #B8956A 40%, #A07850 100%);
+            border: 2px solid #8B6B4A;
+            box-shadow: inset 0 -10px 20px rgba(139, 107, 74, 0.4), inset 0 5px 15px rgba(255, 248, 240, 0.3), 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .bei-yang::before {
+            content: '陽';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 18px;
+            color: rgba(92, 74, 58, 0.5);
+            font-family: "STSong", serif;
+        }
+        /* 木纹效果 */
+        .bei-yang::after {
+            content: '';
+            position: absolute;
+            inset: 5px;
+            background: repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(139, 107, 74, 0.1) 3px, rgba(139, 107, 74, 0.1) 4px);
+            border-radius: 30px;
+        }
+        
+        /* 阴面（弧面朝上） */
+        .bei-yin {
+            bottom: 0;
+            background: linear-gradient(20deg, #8B6B4A 0%, #6B4B2A 50%, #5A3A1A 100%);
+            border: 2px solid #4A2A0A;
+            transform: rotateX(180deg);
+            box-shadow: inset 0 10px 20px rgba(0, 0, 0, 0.4), inset 0 -5px 15px rgba(255, 248, 240, 0.1), 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .bei-yin::before {
+            content: '陰';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) rotateX(180deg);
+            font-size: 18px;
+            color: rgba(245, 240, 230, 0.4);
+            font-family: "STSong", serif;
+        }
+
+        /* 掷杯动画 */
+        .bei.throwing .bei-body { animation: beiThrow 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+        @keyframes beiThrow {
+            0% { transform: translateY(-120px) rotateX(0deg) rotateZ(0deg); }
+            20% { transform: translateY(-60px) rotateX(180deg) rotateZ(60deg); }
+            40% { transform: translateY(-20px) rotateX(360deg) rotateZ(120deg); }
+            60% { transform: translateY(-50px) rotateX(540deg) rotateZ(200deg); }
+            75% { transform: translateY(-10px) rotateX(680deg) rotateZ(280deg); }
+            85% { transform: translateY(-20px) rotateX(720deg) rotateZ(300deg); }
+            92% { transform: translateY(5px) rotateX(750deg) rotateZ(320deg); }
+            100% { transform: translateY(0) rotateX(780deg) rotateZ(340deg); }
+        }
+
+        /* 落地状态 */
+        .bei.standing .bei-body { transform: rotateX(0deg); }
+        .bei.inverted .bei-body { transform: rotateX(180deg); }
+
+        /* 弹跳效果 */
+        .bei.bounce .bei-body { animation: beiBounce 0.3s ease-out; }
+        @keyframes beiBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .throw-btn {
+            padding: 16px 55px;
+            font-size: 17px;
+            font-family: inherit;
+            color: rgba(92, 74, 58, 0.95);
+            background: linear-gradient(145deg, rgba(232, 213, 183, 0.95), rgba(212, 182, 138, 0.95));
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            letter-spacing: 0.3em;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.35);
+            transition: all 0.3s ease;
+        }
+        .throw-btn:active { transform: scale(0.95); }
+        .throw-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .div-hint { font-size: 12px; color: rgba(166, 146, 114, 0.5); margin-top: 25px; letter-spacing: 0.15em; }
+
+        /* 结果弹窗 */
+        .div-result {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(26, 26, 26, 0.97);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+        }
+        .div-result.show { display: flex; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .result-icon { font-size: 70px; margin-bottom: 25px; }
+        .result-text { font-size: 22px; color: rgba(245, 240, 230, 0.95); letter-spacing: 0.3em; margin-bottom: 12px; font-family: "STSong", "SimSun", serif; }
+        .result-desc { font-size: 13px; color: rgba(166, 146, 114, 0.7); letter-spacing: 0.15em; text-align: center; max-width: 260px; line-height: 1.8; }
+        .result-action-btn { margin-top: 35px; padding: 12px 35px; font-size: 14px; font-family: inherit; background: transparent; border: 1px solid rgba(212, 182, 138, 0.4); border-radius: 20px; color: rgba(166, 146, 114, 0.8); cursor: pointer; letter-spacing: 0.2em; transition: all 0.3s ease; }
+        .result-action-btn:hover { border-color: rgba(212, 182, 138, 0.7); color: var(--gold); }
+
+        /* ========== 签文结果页 ========== */
+        .result-page { background: var(--bg); padding: 50px 20px 100px; }
+        .result-header { text-align: center; margin-bottom: 25px; }
+        .result-date { font-size: 12px; color: var(--light); letter-spacing: 0.2em; margin-bottom: 5px; }
+        .result-user { font-size: 14px; color: var(--dark); letter-spacing: 0.15em; }
+        .result-card { background: rgba(255,255,255,0.7); border: 1px solid rgba(212, 182, 138, 0.35); border-radius: 18px; padding: 28px 20px; margin-bottom: 18px; position: relative; }
+        .result-card::before, .result-card::after { content: '◈'; position: absolute; color: var(--gold); font-size: 11px; }
+        .result-card::before { top: 10px; left: 10px; }
+        .result-card::after { bottom: 10px; right: 10px; }
+        .guest-info { text-align: center; margin-bottom: 20px; }
+        .guest-title { font-size: 34px; color: var(--dark); letter-spacing: 0.4em; margin-bottom: 5px; font-family: "STSong", "SimSun", serif; }
+        .tea-title { font-size: 14px; color: var(--light); letter-spacing: 0.2em; }
+        .stars { text-align: center; font-size: 20px; color: var(--gold); letter-spacing: 0.5em; margin: 18px 0; }
+        .yi-ji { display: flex; justify-content: center; gap: 25px; margin: 20px 0; font-size: 12px; }
+        .yi-ji-item { text-align: center; flex: 1; max-width: 120px; }
+        .yi-ji-label { color: var(--light); font-size: 11px; margin-bottom: 6px; letter-spacing: 0.15em; }
+        .yi-ji-content { color: var(--dark); line-height: 1.7; font-size: 12px; }
+        .qianyu { text-align: center; padding: 18px 0; border-top: 1px solid rgba(212, 182, 138, 0.15); border-bottom: 1px solid rgba(212, 182, 138, 0.15); }
+        .qianyu-label { font-size: 10px; color: var(--light); letter-spacing: 0.3em; margin-bottom: 10px; }
+        .qianyu-text { font-size: 16px; color: var(--dark); font-style: italic; line-height: 1.8; }
+        .interpretation { text-align: center; margin: 18px 0; padding: 14px; background: rgba(212, 182, 138, 0.08); border-radius: 10px; font-size: 13px; color: var(--dark); line-height: 1.7; }
+        .brewing { text-align: center; font-size: 12px; color: var(--light); margin: 15px 0; letter-spacing: 0.1em; }
+        .brewing strong { color: var(--dark); }
+        .result-img { width: 100%; max-width: 220px; margin: 18px auto; display: block; border-radius: 10px; box-shadow: 0 5px 20px rgba(139, 115, 85, 0.12); }
+        .result-brand { text-align: center; font-size: 12px; color: var(--light); letter-spacing: 0.3em; margin-top: 18px; }
+        
+        /* 签文页故事区域 */
+        .result-story {
+            margin: 25px 0;
+            padding: 22px 18px;
+            background: linear-gradient(135deg, rgba(212, 182, 138, 0.08), rgba(212, 182, 138, 0.03));
+            border-left: 3px solid var(--gold);
+            border-radius: 0 12px 12px 0;
+            position: relative;
+        }
+        .result-story::before {
+            content: '山客故事';
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            font-size: 10px;
+            color: var(--light);
+            letter-spacing: 0.2em;
+            background: var(--bg);
+            padding: 0 8px;
+        }
+        .result-story-text {
+            font-size: 14px;
+            color: var(--dark);
+            line-height: 2;
+            font-family: "STSong", "SimSun", serif;
+        }
+        .result-actions { display: flex; gap: 12px; margin-top: 20px; }
+        .result-btn { flex: 1; padding: 13px; border-radius: 22px; font-size: 13px; font-family: inherit; letter-spacing: 0.15em; cursor: pointer; transition: all 0.3s ease; }
+        .btn-redraw { background: linear-gradient(145deg, #E8D5B7, var(--gold)); border: 1px solid #C4A67A; color: var(--dark); }
+        .btn-share { background: transparent; border: 1px solid var(--gold); color: var(--light); }
+
+        /* ========== 二林：旋转阵法 ========== */
+        .erlin-page { background-color: var(--bg); padding: 60px 20px calc(100px + env(safe-area-inset-bottom)); min-height: 100vh; min-height: 100dvh; }
+        .erlin-header { text-align: center; margin-bottom: 30px; }
+        .erlin-title { font-size: 26px; color: var(--dark); letter-spacing: 0.4em; margin-bottom: 8px; font-family: "STSong", "SimSun", serif; }
+        .erlin-subtitle { font-size: 13px; color: var(--light); letter-spacing: 0.2em; }
+        .rotation-wheel { position: relative; width: 280px; height: 280px; margin: 35px auto; }
+        .wheel-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70px; height: 70px; background: linear-gradient(145deg, var(--gold), #C4A67A); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; color: white; letter-spacing: 0.2em; box-shadow: 0 4px 20px rgba(212, 182, 138, 0.4); }
+        .wheel-item { position: absolute; width: 60px; height: 75px; background: rgba(255,255,255,0.88); border: 1px solid rgba(212, 182, 138, 0.4); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 3px 12px rgba(139, 115, 85, 0.08); }
+        .wheel-item:hover { transform: scale(1.1); box-shadow: 0 8px 25px rgba(212, 182, 138, 0.25); }
+        .wheel-item-img { width: 45px; height: 45px; object-fit: cover; border-radius: 5px; margin-bottom: 4px; }
+        .wheel-item-name { font-size: 11px; color: var(--dark); letter-spacing: 0.1em; }
+        .wheel-hint { text-align: center; font-size: 11px; color: var(--light); letter-spacing: 0.15em; margin-top: 18px; }
+
+        /* 产品详情 */
+        .product-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); display: none; overflow-y: auto; z-index: 150; }
+        .product-modal.show { display: block; }
+        .modal-close { position: fixed; top: 15px; right: 15px; width: 36px; height: 36px; background: rgba(255,255,255,0.9); border: 1px solid rgba(212, 182, 138, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; color: var(--light); z-index: 151; }
+        .product-content { padding: 50px 20px 80px; max-width: 400px; margin: 0 auto; }
+        .product-hero { width: 100%; max-width: 280px; margin: 0 auto 25px; display: block; border-radius: 14px; box-shadow: 0 8px 30px rgba(139, 115, 85, 0.15); }
+        .product-name { text-align: center; font-size: 24px; color: var(--dark); letter-spacing: 0.3em; margin-bottom: 5px; font-family: "STSong", "SimSun", serif; }
+        .product-tea { text-align: center; font-size: 13px; color: var(--light); letter-spacing: 0.2em; margin-bottom: 25px; }
+        .product-story { background: rgba(212, 182, 138, 0.06); border-left: 3px solid var(--gold); padding: 18px 16px; margin-bottom: 25px; border-radius: 0 10px 10px 0; }
+        .product-story-first { margin-top: 15px; }
+        .product-story-text { font-size: 14px; color: var(--dark); line-height: 2; text-align: justify; }
+        .product-section { margin-bottom: 20px; }
+        .product-section-title { font-size: 12px; color: var(--light); letter-spacing: 0.2em; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid rgba(212, 182, 138, 0.2); }
+        .product-section-content { font-size: 14px; color: var(--dark); line-height: 1.8; }
+        .product-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .product-tag { padding: 5px 12px; background: rgba(212, 182, 138, 0.12); border-radius: 12px; font-size: 11px; color: var(--dark); }
+        .product-actions { display: flex; gap: 12px; margin-top: 28px; }
+        .product-btn { flex: 1; padding: 13px; border-radius: 22px; font-size: 13px; font-family: inherit; letter-spacing: 0.15em; cursor: pointer; transition: all 0.3s ease; text-align: center; }
+        .btn-contact { background: linear-gradient(145deg, #E8D5B7, var(--gold)); border: 1px solid #C4A67A; color: var(--dark); }
+
+        /* 微信二维码弹窗 */
+        .wechat-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(10, 10, 10, 0.85); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
+        .wechat-modal.show { display: flex; }
+        .wechat-card { background: #F5F0E6; border-radius: 16px; padding: 40px 30px; text-align: center; max-width: 300px; width: 100%; position: relative; }
+        .wechat-close { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; background: rgba(212, 182, 138, 0.2); border: none; border-radius: 50%; font-size: 18px; color: var(--light); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .wechat-qrcode { width: 200px; height: 200px; margin: 0 auto 20px; border-radius: 8px; object-fit: cover; }
+        .wechat-title { font-size: 16px; color: var(--dark); letter-spacing: 0.3em; margin-bottom: 8px; font-family: "STSong", "SimSun", serif; }
+        .wechat-hint { font-size: 12px; color: var(--light); letter-spacing: 0.1em; }
+
+        /* 表单弹窗 */
+        .form-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(245, 240, 230, 0.98); display: none; overflow-y: auto; z-index: 150; }
+        .form-modal.show { display: block; }
+        .form-close { position: fixed; top: 15px; right: 15px; width: 36px; height: 36px; background: rgba(255,255,255,0.9); border: 1px solid rgba(212, 182, 138, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; color: var(--light); z-index: 151; }
+        .form-content { padding: 70px 25px 60px; max-width: 340px; margin: 0 auto; }
+        .form-title { text-align: center; font-size: 20px; color: var(--dark); letter-spacing: 0.3em; margin-bottom: 28px; font-family: "STSong", "SimSun", serif; }
+        .form-group { margin-bottom: 18px; }
+        .form-label { display: block; font-size: 12px; color: var(--light); letter-spacing: 0.15em; margin-bottom: 7px; }
+        .form-input, .form-select, .form-textarea { width: 100%; padding: 13px 14px; font-size: 14px; font-family: inherit; color: var(--dark); background: rgba(255,255,255,0.8); border: 1px solid rgba(212, 182, 138, 0.35); border-radius: 10px; outline: none; transition: all 0.3s ease; }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--gold); }
+        .form-textarea { min-height: 90px; resize: vertical; }
+        .form-submit { width: 100%; padding: 14px; margin-top: 18px; font-size: 15px; font-family: inherit; color: white; background: linear-gradient(145deg, var(--gold), #C4A67A); border: none; border-radius: 22px; cursor: pointer; letter-spacing: 0.25em; transition: all 0.3s ease; }
+        .form-submit:active { transform: scale(0.98); }
+
+        /* 故事页 */
+        .story-page { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); display: none; overflow-y: auto; z-index: 150; }
+        .story-page.show { display: block; }
+        .story-close { position: fixed; top: 15px; right: 15px; width: 36px; height: 36px; background: rgba(255,255,255,0.9); border: 1px solid rgba(212, 182, 138, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; color: var(--light); z-index: 151; }
+        .story-content { padding: 60px 25px 80px; max-width: 340px; margin: 0 auto; }
+        .story-section { margin-bottom: 28px; opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
+        .story-section.visible { opacity: 1; transform: translateY(0); }
+        .story-title { font-size: 18px; color: var(--dark); letter-spacing: 0.3em; margin-bottom: 14px; text-align: center; font-family: "STSong", "SimSun", serif; }
+        .story-text { font-size: 14px; color: var(--dark); line-height: 2; text-align: justify; }
+        .story-quote { padding: 18px; background: rgba(212, 182, 138, 0.08); border-left: 3px solid var(--gold); border-radius: 0 10px 10px 0; font-style: italic; margin: 18px 0; }
+        .story-quote-large { font-family: "STSong", "SimSun", serif; font-size: 26px; color: #e8e0d0; letter-spacing: 0.15em; text-align: center; padding: 30px 20px; }
+        .story-quote-final { font-family: "STSong", "SimSun", serif; font-size: 30px; color: #D4B68A; letter-spacing: 0.2em; text-align: center; padding: 40px 20px; text-shadow: 0 0 30px rgba(212, 182, 138, 0.4); }
+        
+        /* 三森页面 - 文字浮现效果 */
+        .sanlin-page {
+            background: #0a0a0a;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 40px;
+            position: relative;
+        }
+        .sanlin-page.active {
+            display: flex !important;
+        }
+        .sanlin-close {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            width: 36px;
+            height: 36px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(212, 182, 138, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            color: rgba(166, 146, 114, 0.6);
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+        .sanlin-close:hover {
+            background: rgba(255,255,255,0.15);
+            color: rgba(212, 182, 138, 0.9);
+        }
+        .sanlin-content {
+            text-align: center;
+            max-width: 500px;
+        }
+        .sanlin-text {
+            font-family: "STSong", "SimSun", "Noto Serif SC", serif;
+            font-size: 18px;
+            color: rgba(232, 224, 208, 0);
+            letter-spacing: 0.1em;
+            line-height: 2;
+            margin-bottom: 40px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1.2s ease;
+        }
+        .sanlin-text.show {
+            opacity: 1;
+            transform: translateY(0);
+            color: rgba(232, 224, 208, 0.9);
+        }
+        .sanlin-text.show::after {
+            content: '';
+            display: block;
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(212, 182, 138, 0.5), transparent);
+            margin: 30px auto 0;
+        }
+        .sanlin-final {
+            font-size: 28px;
+            color: rgba(212, 182, 138, 0);
+            letter-spacing: 0.25em;
+            text-shadow: none;
+            transition: all 1.5s ease;
+        }
+        .sanlin-final.show {
+            color: #D4B68A;
+            text-shadow: 0 0 40px rgba(212, 182, 138, 0.5);
+        }
+        .sanlin-brand {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: rgba(166, 146, 114, 0.5);
+            letter-spacing: 0.3em;
+        }
+        
+        /* 表单页新样式 */
+        .form-section { margin-bottom: 20px; text-align: center; }
+        .form-section p { color: rgba(166, 146, 114, 0.8); font-size: 14px; line-height: 1.6; }
+        .contact-section { padding: 30px 20px; background: rgba(255, 255, 255, 0.03); border-radius: 12px; margin: 20px 0; }
+        .contact-icon { font-size: 48px; margin-bottom: 16px; }
+        .contact-text { font-family: "STSong", "SimSun", serif; font-size: 22px; color: #e8e0d0; letter-spacing: 0.2em; margin-bottom: 12px; }
+        .contact-hint { font-size: 13px; color: rgba(166, 146, 114, 0.7); margin-bottom: 20px; }
+        .contact-qrcode { font-size: 14px; color: rgba(212, 182, 138, 0.9); padding: 20px; background: rgba(212, 182, 138, 0.1); border-radius: 8px; border: 1px dashed rgba(212, 182, 138, 0.3); }
+        .form-submit-btn { width: 100%; padding: 16px 30px; font-size: 16px; color: rgba(20, 20, 20, 0.9); background: linear-gradient(145deg, rgba(232, 213, 183, 0.98), rgba(212, 182, 138, 0.98)); border: none; border-radius: 30px; cursor: pointer; letter-spacing: 0.2em; margin-top: 20px; }
+
+        /* 分享容器 */
+        .share-container { position: fixed; top: -9999px; left: -9999px; width: 360px; padding: 25px; background: var(--bg); }
+        .share-card { background: rgba(255,255,255,0.9); border: 2px solid var(--gold); border-radius: 18px; padding: 25px 20px; text-align: center; }
+        .share-hint { font-size: 11px; color: rgba(166, 146, 114, 0.6); margin-top: 12px; letter-spacing: 0.1em; }
+        .share-brand { font-size: 14px; color: var(--light); letter-spacing: 0.3em; margin-bottom: 12px; }
+        .share-user { font-size: 12px; color: var(--dark); margin-bottom: 4px; }
+        .share-date { font-size: 11px; color: var(--light); margin-bottom: 18px; }
+        .share-guest { font-size: 26px; color: var(--dark); letter-spacing: 0.3em; margin-bottom: 4px; font-family: "STSong", "SimSun", serif; }
+        .share-tea { font-size: 12px; color: var(--light); margin-bottom: 12px; }
+        .share-stars { font-size: 16px; color: var(--gold); letter-spacing: 0.4em; margin-bottom: 12px; }
+        .share-qianyu { font-size: 13px; color: var(--dark); font-style: italic; padding: 14px 0; border-top: 1px solid rgba(212, 182, 138, 0.25); border-bottom: 1px solid rgba(212, 182, 138, 0.25); }
+        .share-img { width: 160px; margin: 14px auto; border-radius: 8px; }
+        #canvas { display: none; }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(92, 74, 58, 0.95); color: white; padding: 18px 28px; border-radius: 10px; font-size: 14px; letter-spacing: 0.15em; z-index: 300; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
+        .toast.show { opacity: 1; }
+    </style>
+</head>
+<body>
+    <div class="toast" id="toast"></div>
+    <div class="share-container" id="shareContainer">
+        <div class="share-card">
+            <div class="share-brand">三木不为森 · 南山帖</div>
+            <div class="share-user" id="shareUser"></div>
+            <div class="share-date" id="shareDate"></div>
+            <div class="share-guest" id="shareGuest"></div>
+            <div class="share-tea" id="shareTea"></div>
+            <div class="share-stars" id="shareStars"></div>
+            <div class="share-qianyu" id="shareQianyu"></div>
+            <img class="share-img" id="shareImg" alt="茶品">
+            <div class="share-hint">长按图片保存 · 分享至朋友圈</div>
+        </div>
+    </div>
+    <canvas id="canvas"></canvas>
+
+    <!-- ========== 开篇：纯笔墨书法 ========== -->
+    <div class="intro-page active" id="introPage">
+        <button class="skip-btn" onclick="skipIntro()">跳过 ></button>
+        
+        <!-- 墨滴 -->
+        <div class="ink-drop-container" id="inkDropContainer">
+            <div class="ink-drop" id="inkDrop"></div>
+        </div>
+        
+        <!-- 墨迹溅散 -->
+        <div class="ink-splash" id="inkSplash"></div>
+        
+        <!-- 书写区域 -->
+        <div class="calligraphy-area">
+            <!-- 一 -->
+            <div class="single-char char-yi" id="charYi">
+                <svg viewBox="0 0 280 280">
+                    <path d="M40 140 L240 140" />
+                </svg>
+            </div>
+            
+            <!-- 二 -->
+            <div class="single-char char-er" id="charEr">
+                <svg viewBox="0 0 280 280">
+                    <path d="M60 90 L220 90" />
+                    <path d="M60 190 L220 190" />
+                </svg>
+            </div>
+            
+            <!-- 三 -->
+            <div class="single-char char-san" id="charSan">
+                <svg viewBox="0 0 280 280">
+                    <path d="M60 70 L220 70" />
+                    <path d="M60 140 L220 140" />
+                    <path d="M60 210 L220 210" />
+                </svg>
+            </div>
+            
+            <!-- 三木不为森 -->
+            <div class="sanmu-container" id="sanmuContainer">
+                <div class="sanmu-char">三</div>
+                <div class="sanmu-char">木</div>
+                <div class="sanmu-char">不</div>
+                <div class="sanmu-char">为</div>
+                <div class="sanmu-char">森</div>
+            </div>
+        </div>
+
+        <!-- 南山帖标题 -->
+        <div class="intro-brand" id="introBrand">
+            <h1>南 山 帖</h1>
+        </div>
+
+        <!-- 南山有四季，四季有十二客 - 竖排 -->
+        <div class="intro-poem" id="introPoem">
+            <div class="poem-char">南山有四季</div>
+            <div class="poem-char">四季有十二客</div>
+        </div>
+
+        <!-- 输入区 -->
+        <div class="intro-input-section" id="introInputSection">
+            <div class="intro-label">南山山客 ·</div>
+            <input type="text" class="intro-input" id="userNameInput" placeholder="输入你的名字" maxlength="10">
+            <button class="intro-btn" id="introBtn" onclick="goToYimu()">进入南山</button>
+        </div>
+    </div>
+
+    <!-- ========== 一木：山客形象 ========== -->
+    <div class="page yimu-page" id="yimuPage">
+        <div class="yimu-header">
+            <div class="yimu-title">一 木</div>
+            <div class="yimu-subtitle">缘起一木，盲选今日茶运</div>
+        </div>
+        <div class="guests-grid" id="guestsGrid"></div>
+        <div class="yimu-hint">轻触山客，开启今日茶运</div>
+    </div>
+
+    <!-- ========== 掷杯（已废弃，不再使用） ========== -->
+    <div class="page divination-page" id="divinationPage" style="display:none;">
+        <div class="div-guest" id="divGuest"></div>
+        <div class="div-tea" id="divTea"></div>
+        
+        <div class="bei-area">
+            <div class="bei bei-left" id="beiLeft">
+                <div class="bei-body">
+                    <div class="bei-half bei-yang"></div>
+                    <div class="bei-half bei-yin"></div>
+                </div>
+            </div>
+            <div class="bei bei-right" id="beiRight">
+                <div class="bei-body">
+                    <div class="bei-half bei-yang"></div>
+                    <div class="bei-half bei-yin"></div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="throw-btn" id="throwBtn" onclick="throwBei()">掷 杯</button>
+        <div class="div-hint">神明应答，方得签文</div>
+    </div>
+
+    <!-- 掷杯结果 -->
+    <div class="div-result" id="divResult">
+        <div class="result-icon" id="resultIcon"></div>
+        <div class="result-text" id="resultText"></div>
+        <div class="result-desc" id="resultDesc"></div>
+        <button class="result-action-btn" id="resultActionBtn" onclick="handleResultAction()"></button>
+    </div>
+
+    <!-- ========== 签文结果 ========== -->
+    <div class="page result-page" id="resultPage">
+        <div class="result-header">
+            <div class="result-date" id="resultDate"></div>
+            <div class="result-user" id="resultUser"></div>
+        </div>
+        <div class="result-card">
+            <div class="guest-info">
+                <div class="guest-title" id="guestTitle"></div>
+                <div class="tea-title" id="teaTitle"></div>
+            </div>
+            <div class="stars" id="stars"></div>
+            <div class="yi-ji">
+                <div class="yi-ji-item">
+                    <div class="yi-ji-label">宜</div>
+                    <div class="yi-ji-content" id="yiContent"></div>
+                </div>
+                <div class="yi-ji-item">
+                    <div class="yi-ji-label">忌</div>
+                    <div class="yi-ji-content" id="jiContent"></div>
+                </div>
+            </div>
+            <div class="qianyu">
+                <div class="qianyu-label">—— 签 语 ——</div>
+                <div class="qianyu-text" id="qianyuText"></div>
+            </div>
+            <div class="interpretation" id="interpretation"></div>
+            <img class="result-img" id="resultImg" alt="茶品">
+            <div class="result-story">
+                <div class="result-story-text" id="resultStory"></div>
+            </div>
+            <div class="result-brand">三木不为森 · 南山帖</div>
+        </div>
+        <div class="result-actions">
+            <button class="result-btn btn-redraw" onclick="reDraw()">再选一签</button>
+            <button class="result-btn btn-share" onclick="shareResult()">分享茶运</button>
+        </div>
+    </div>
+
+    <!-- ========== 二林 ========== -->
+    <div class="page erlin-page" id="erlinPage">
+        <div class="erlin-header">
+            <div class="erlin-title">二 林</div>
+            <div class="erlin-subtitle">博览 · 洞察 · 产品</div>
+        </div>
+        <div class="rotation-wheel" id="rotationWheel">
+            <div class="wheel-center">南山</div>
+        </div>
+        <div class="wheel-hint">左右滑动旋转 · 点击查看详情</div>
+    </div>
+
+    <!-- 产品详情 -->
+    <div class="product-modal" id="productModal">
+        <div class="modal-close" onclick="closeProductModal()">×</div>
+        <div class="product-content">
+            <div class="product-name" id="productName"></div>
+            <div class="product-tea" id="productTea"></div>
+            <div class="product-story product-story-first">
+                <div class="product-story-text" id="productStory"></div>
+            </div>
+            <img class="product-hero" id="productHero" alt="产品">
+            <div class="product-section">
+                <div class="product-section-title">风味笔记</div>
+                <div class="product-section-content" id="productFlavor"></div>
+            </div>
+            <div class="product-section">
+                <div class="product-section-title">收藏价值</div>
+                <div class="product-section-content" id="productValue"></div>
+            </div>
+            <div class="product-section">
+                <div class="product-section-title">产品标签</div>
+                <div class="product-tags" id="productTags"></div>
+            </div>
+            <div class="product-actions">
+                <button class="product-btn btn-contact" onclick="contactUs()">立即私信</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== 三森 ========== -->
+    <div class="page sanlin-page" id="sanlinPage">
+        <div class="sanlin-close" onclick="closeStory()">×</div>
+        <div class="sanlin-content">
+            <div class="sanlin-text" id="sanlinLine1">莫离在屋前煮水。</div>
+            <div class="sanlin-text" id="sanlinLine2">水开了，她把水倒进碗里，热气升起来，模糊了她的脸。</div>
+            <div class="sanlin-text" id="sanlinLine3">有人推门进来，问："今日喝什么？"</div>
+            <div class="sanlin-text" id="sanlinLine4">她没有回答，只是指了指窗外。</div>
+            <div class="sanlin-text sanlin-final" id="sanlinLine5">窗外，南山正青。</div>
+        </div>
+        <div class="sanlin-brand">三木不为森 · 南山帖</div>
+    </div>
+
+    <!-- 私人定制 -->
+    <div class="form-modal" id="customForm">
+        <div class="form-close" onclick="closeForm('customForm')">×</div>
+        <div class="form-content">
+            <div class="form-title">私人定制</div>
+            <div class="form-section">
+                <p>根据您的口味偏好、预算与用途，打造专属茶礼</p>
+            </div>
+            <div class="form-section contact-section">
+                <div class="contact-icon">💬</div>
+                <div class="contact-text">添加客服微信</div>
+                <div class="contact-hint">长按识别二维码，备注"私人定制"</div>
+                <div class="contact-qrcode">请扫码添加客服微信咨询</div>
+            </div>
+            <div class="form-section">
+                <button class="form-submit-btn" onclick="contactUs()">复制客服微信</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 企业合作 -->
+    <div class="form-modal" id="corporateForm">
+        <div class="form-close" onclick="closeForm('corporateForm')">×</div>
+        <div class="form-content">
+            <div class="form-title">企业合作</div>
+            <div class="form-section">
+                <p>商务礼品、企业福利、文化活动，共创茶意解决方案</p>
+            </div>
+            <div class="form-section contact-section">
+                <div class="contact-icon">💼</div>
+                <div class="contact-text">添加商务合作</div>
+                <div class="contact-hint">长按识别二维码，备注"企业合作"</div>
+                <div class="contact-qrcode">请扫码添加商务微信咨询</div>
+            </div>
+            <div class="form-section">
+                <button class="form-submit-btn" onclick="contactUs()">复制商务微信</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 品牌故事 -->
+    <div class="story-page" id="storyPage">
+        <div class="story-close" onclick="closeStory()">×</div>
+        <div class="story-content">
+            <div class="story-section">
+                <div class="story-quote-large">莫离在屋前煮水。</div>
+            </div>
+            <div class="story-section">
+                <div class="story-text">水开了，她把水倒进碗里，热气升起来，模糊了她的脸。</div>
+            </div>
+            <div class="story-section">
+                <div class="story-text">有人推门进来，问："今日喝什么？"</div>
+            </div>
+            <div class="story-section">
+                <div class="story-text">她没有回答，只是指了指窗外。</div>
+            </div>
+            <div class="story-section">
+                <div class="story-quote-final">窗外，南山正青。</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部导航 -->
+    <nav class="nav-bar" id="navBar" style="display: none;">
+        <div class="nav-dot active" onclick="switchTab('yimu')">
+            <div class="dot"></div>
+            <div class="label">一木</div>
+        </div>
+        <div class="nav-dot" onclick="switchTab('erlin')">
+            <div class="dot"></div>
+            <div class="label">二林</div>
+        </div>
+        <div class="nav-dot" onclick="openStory()">
+            <div class="dot"></div>
+            <div class="label">三森</div>
+        </div>
+    </nav>
+
+    <!-- 微信二维码弹窗 -->
+    <div class="wechat-modal" id="wechatModal">
+        <div class="wechat-card">
+            <button class="wechat-close" onclick="closeWechatModal()">×</button>
+            <img class="wechat-qrcode" src="images/wechat_qr.jpg" alt="客服微信">
+            <div class="wechat-title">扫码添加客服微信</div>
+            <div class="wechat-hint">备注"南山帖"，享受专属茶礼</div>
+        </div>
+    </div>
+
+    <script>
+        /* ================================================================
+         * 产品数据 - 新增产品只需在数组中添加对象
+         * ================================================================ */
+        const PRODUCTS = [
+            {
+                id: "tongmeng",
+                name: "童濛",
+                teaName: "白毫银针",
+                season: "春",
+                image: "images/product_tongmeng.jpg",
+                portrait: "images/%E7%AB%A5%E6%BF%9B.jpg",
+                category: "白茶",
+                story: "春山初醒，晨雾未散。露水从叶尖滑落，跌进泥土里，发出极轻的声响。有个孩子赤脚走过山径，衣襟上沾着青草的汁液，眼睛像刚洗过的天空。他看什么都新鲜，看什么都欢喜。山雀掠过，他仰头；野花绽放，他俯身。他叫童濛——是万物初生时的模样，是天地间第一缕干净的呼吸。",
+                flavor: "毫香清幽，如春日晨露。入口鲜甜，回甘绵长，带有淡淡的花香。",
+                brewing: "水温85-90°C，投茶5g，注水150ml，15秒出汤，可续水5-7次。",
+                value: "政和核心产区，明前头采，芽头肥壮，白毫密披，极具收藏价值。",
+                tags: ["白茶", "春茶", "明前", "头采"],
+                fortunes: [
+                    { stars: 4, yi: ["赤脚走进那片还带着露水的草坡", "追一只蝴蝶直到它累了"], ji: ["把所有问题都想清楚再出发", "假装自己什么都知道"], qianyu: "溪声便是广长舌，山色无非清净身", interpretation: "今日适合放下思虑，以童心观世界。" },
+                    { stars: 2, yi: ["允许自己迷路一会儿", "蹲下来看蚂蚁搬家"], ji: ["催促自己给出答案", "用别人的尺子量自己的路"], qianyu: "稚子不知骑牛意，寻常一样窗前月", interpretation: "今日稍显迷茫，不必急于寻找答案，允许自己慢下来。"},
+                    { stars: 3, yi: ["等一阵风穿过头发", "把一个问题问三遍"], ji: ["急于找到那个对的答案", "把自己藏起来不给看"], qianyu: "不恨此花飞尽，恨西园落红难缀", interpretation: "今日适合静待时机，顺其自然。"},
+                    { stars: 5, yi: ["把口袋里的小石子掏出来给朋友看", "第一次去做一件事"], ji: ["守着旧地图找新地方", "把糖藏到最后不吃"], qianyu: "春风得意马蹄疾，一日看尽长安花", interpretation: "大吉之日！适合开启新事物，表白、求职、远行皆有佳运。"},
+                    { stars: 3, yi: ["学着大人模样认真做一件小事", "记住今天云的样子"], ji: ["害怕问出为什么", "假装已经见过世面"], qianyu: "问渠那得清如许，为有源头活水来", interpretation: "今日适合学习新知，探索未知。"},
+                    { stars: 3, yi: ["把今天的秘密说给一棵树听", "在黄昏时分安静坐一会儿"], ji: ["急着把什么都变成有意义的事", "催自己快快长大"], qianyu: "归来仍是少年心，桃花流水窅然去", interpretation: "今日适合独处反思，回归本心。"}
+                ]
+            },
+            {
+                id: "fulan",
+                name: "浮岚",
+                teaName: "福建高山绿茶",
+                season: "春",
+                image: "images/product_fulan.jpg",
+                portrait: "images/%E6%B5%AE%E5%B2%9A.jpg",
+                category: "绿茶",
+                story: "午后，山谷里起了雾。不是浓得化不开的那种，而是轻薄的，游走的，像是山在呼吸。雾从溪面升起，绕过松林，在半山腰停住。有个少年站在雾里，衣袂被风轻轻吹起，看不清面容，只觉得他整个人都像是从云中长出来的。他叫浮岚——是山与天的交界，是看得见却握不住的轻盈。",
+                flavor: "清香淡雅，如山间雾气。入口鲜爽，带有淡淡的豆香与板栗香。",
+                brewing: "水温80-85°C，投茶4g，注水120ml，20秒出汤，可续水4-5次。",
+                value: "政和星溪乡海拔1200米高山茶园，云雾缭绕，品质优异。",
+                tags: ["绿茶", "高山茶", "春茶", "清香"],
+                fortunes: [
+                    { stars: 4, yi: ["站在高处等一阵雾散", "追一片云直到它落在山头"], ji: ["把什么都抓在手里不放", "非要看清楚每一步"], qianyu: "山色空蒙雨亦奇，水光潋滟晴方好", interpretation: "今日如山间晨雾，保持从容自有好运。"},
+                    { stars: 2, yi: ["承认有些东西就是握不住的", "让自己在雾里多站一会儿"], ji: ["非要此刻就看得清楚明白", "把雾当成墙而不是路"], qianyu: "本来无一物，何处惹尘埃", interpretation: "今日运势稍低，不宜做重大决定。"},
+                    { stars: 3, yi: ["等该散的散去", "在看不清的时候仍然往前走几步"], ji: ["停下来非要把雾看透", "用昨天的地图走今天的路"], qianyu: "向来枉费推移力，此日中流自在行", interpretation: "今日顺其自然，不必强求改变。"},
+                    { stars: 4, yi: ["趁雾薄时往更高处走", "把此刻的朦胧记在心里"], ji: ["以为眼前的就是全部", "停下来等雾完全散了再走"], qianyu: "拨得云开见月明，吹尽狂沙始到金", interpretation: "拨云见日之时将近！今日适合坚持。"},
+                    { stars: 5, yi: ["借雾隐去不必见人的那些", "做一件只有自己知道的事"], ji: ["把模糊当成借口停在原地", "谢绝所有想靠近的人"], qianyu: "小舟从此逝，江海寄余生", interpretation: "大吉之日！适合隐居、独处、创作。"},
+                    { stars: 3, yi: ["记住雾散前最后一刻的样子", "把走过的路都当成风景"], ji: ["回望时责怪自己当时看不清", "把什么都定义得清清楚楚"], qianyu: "试问岭南应不好，却道此心安处是吾乡", interpretation: "心安定处便是归处。"}
+                ]
+            },
+            {
+                id: "buqi",
+                name: "不器",
+                teaName: "白牡丹",
+                season: "夏",
+                image: "images/product_buqi.jpg",
+                portrait: "images/%E4%B8%8D%E5%99%A8.jpg",
+                category: "白茶",
+                story: "夏日漫长，蝉声如织。树荫下坐着一个人，他面前摆着粗陶碗，碗里盛着清水。有人来问路，他指；有人来借火，他给；有人来闲谈，他听。他不拒绝任何人，也不强留任何人。他的性子温和，不偏不倚，像是山间的风，吹过就算了。他叫不器——君子不器，他什么都是，也什么都不是。",
+                flavor: "花香馥郁，如夏日晚风。入口甘甜，有茉莉与兰花的复合香气。",
+                brewing: "水温90-95°C，投茶5g，注水150ml，20秒出汤，可续水6-8次。",
+                value: "政和白茶核心产区，一芽一二叶标准采摘，品质上乘。",
+                tags: ["白茶", "夏茶", "花香", "清甜"],
+                fortunes: [
+                    { stars: 4, yi: ["在树荫下多坐一会儿", "给争吵的双方都倒一杯茶"], ji: ["非要分出谁对谁错", "挡在两棵树中间晒太阳"], qianyu: "万物静观皆自得，四时佳兴与人同", interpretation: "今日如茶汤的平和，适合调解、斡旋。"},
+                    { stars: 3, yi: ["站在中间多看一眼", "不急着表态"], ji: ["非此即彼的判断", "把自己逼到必须选边的墙角"], qianyu: "执其两端用其中，于民宜之", interpretation: "今日适合中立、观望。"},
+                    { stars: 3, yi: ["等一等再回应", "把别人的话听完整"], ji: ["话到嘴边就急着说出去", "认定了一个理就不松口"], qianyu: "水深则流缓，语迟则人贵", interpretation: "今日说话三思而后行。"},
+                    { stars: 4, yi: ["接纳那些无法改变的事", "给自己撑一把伞也给别人"], ji: ["硬接从树上落下的果子", "假装看不见需要荫蔽的人"], qianyu: "宠辱不惊，看庭前花开花落", interpretation: "今日适合助人、付出。"},
+                    { stars: 3, yi: ["允许事情以它本来的速度发生", "退一步看全局"], ji: ["推着事情往你想要的方向走", "把自己当成唯一的答案"], qianyu: "有意栽花花不发，无心插柳柳成荫", interpretation: "今日适合放手、随缘。"},
+                    { stars: 4, yi: ["在喧闹中守一份安静", "做那个最后走的人"], ji: ["非要让所有人都看见你的好", "忘记自己也曾被荫蔽"], qianyu: "落红不是无情物，化作春泥更护花", interpretation: "今日适合默默付出。"}
+                ]
+            },
+            {
+                id: "dangui",
+                name: "丹桂",
+                teaName: "桂花红茶",
+                season: "秋",
+                image: "images/product_dangui.jpg",
+                portrait: "images/%E4%B8%B9%E6%A1%82.jpg",
+                category: "红茶",
+                story: "入秋之前，院子里那棵桂树先开了花。不是满树金黄，只是疏疏几簇，香气却已经藏不住了。有个女子在树下铺了竹匾，将落花拢在一起。她动作很轻，怕惊扰了那些细小的花瓣。她叫丹桂——不是秋天的全部，却是秋天最让人惦记的那一部分。",
+                flavor: "桂香浓郁，如金秋时节。入口甜润，桂花的香与红茶的醇完美融合。",
+                brewing: "水温95°C，投茶5g，注水150ml，30秒出汤，可续水5-6次。",
+                value: "政和高山茶园，桂花与红茶窨制而成，秋日限定。",
+                tags: ["红茶", "花茶", "秋茶", "甜香"],
+                fortunes: [
+                    { stars: 4, yi: ["把落下来的花一瓣一瓣收好", "给不在身边的人寄一点秋"], ji: ["把思念说成抱怨", "等人等到心里发酸"], qianyu: "何当共剪西窗烛，却话巴山夜雨时", interpretation: "今日适合联络久未谋面的朋友。"},
+                    { stars: 3, yi: ["在这个秋天做一件温暖的小事", "把想说的话写成短句"], ji: ["等一个可能不会来的消息", "把等待当成唯一的姿势"], qianyu: "花开堪折直须折，莫待无花空折枝", interpretation: "今日适合主动出击。"},
+                    { stars: 2, yi: ["一个人把桂花酿做了", "允许自己低落一阵子"], ji: ["逢人便诉说心事", "在秋雨里站太久不着伞"], qianyu: "天凉好个秋，不是不知愁", interpretation: "今日稍显低沉，适合独处。"},
+                    { stars: 5, yi: ["出门赴约", "把门打开等那个可能来的人"], ji: ["把自己关在香气里不出来", "假装不需要任何人"], qianyu: "金风玉露一相逢，便胜却人间无数", interpretation: "大吉之日！正缘将至、贵人登门。"},
+                    { stars: 3, yi: ["把今年的桂花和去年的做个比较", "给远方的人一个回音"], ji: ["沉溺在旧年花的香气里出不来", "把今年的花等成了去年的"], qianyu: "年年岁岁花相似，岁岁年年人不同", interpretation: "今日怀旧与展望并行。"},
+                    { stars: 4, yi: ["把惦记别人的力气也分一点给自己", "站在桂花树下抬头看"], ji: ["只顾着香气忘了脚下的泥", "把所有的甜都给了别人苦了自己"], qianyu: "满目青山空念远，落花风雨更伤春", interpretation: "今日记得爱自己。"}
+                ]
+            },
+            {
+                id: "lvshuang",
+                name: "履霜",
+                teaName: "工夫红茶",
+                season: "冬",
+                image: "images/product_lvshuang.jpg",
+                portrait: "images/%E5%B1%A5%E9%9C%9C.jpg",
+                category: "红茶",
+                story: "第一场霜落下来的时候，她来了。她穿着素色的衣裳，走路很轻，踩在霜叶上，发出细微的碎裂声。她带来一篮火红的果子，说是山里采的。屋里生了炭火，她坐在火边，影子被拉得很长。有人递给她一杯热水，她捧在手里，却没有喝，只是看着热气慢慢升起来。她叫履霜——是踩在冬天边缘的人，也是带来温暖的人。",
+                flavor: "醇厚甘甜，如冬日暖阳。入口绵柔，有蜜香与薯香，回甘持久。",
+                brewing: "水温95°C，投茶5g，注水150ml，30秒出汤，可续水6-8次，热饮最佳。",
+                value: "政和工夫红茶工艺，冬季采摘，内质丰富，越存越醇。",
+                tags: ["红茶", "冬茶", "暖胃", "醇厚"],
+                fortunes: [
+                    { stars: 4, yi: ["迎着冷风走一段路", "把热茶递给还在外面的人"], ji: ["假装自己不怕冷", "把心里的热藏得太深"], qianyu: "莫听穿林打叶声，何妨吟啸且徐行", interpretation: "今日适合主动关怀他人。"},
+                    { stars: 3, yi: ["独自走完该走的路", "把冷当作平常事"], ji: ["非要让人看出你其实很冷", "在寒夜里等一个不会来的门"], qianyu: "已是悬崖百丈冰，犹有花枝俏", interpretation: "今日虽难，终会过去。"},
+                    { stars: 2, yi: ["在霜化之前不要动", "等一等再决定"], ji: ["硬撑着说一点也不冷", "把所有的温度都给了别人"], qianyu: "冰冻三尺非一日之寒，解冻也需时日", interpretation: "今日运势偏低，适合蛰伏。"},
+                    { stars: 5, yi: ["推开那扇犹豫很久的门", "说出那句一直没说的话"], ji: ["到了门口又折回去", "把真心捂到凉了才给"], qianyu: "踏遍霜雪人未老，梅花香自苦寒来", interpretation: "大吉之日！所有坚持终有回报。"},
+                    { stars: 3, yi: ["在冷的时候给自己添一件衣", "把屋外的霜扫一扫"], ji: ["等别人来问你冷不冷", "站在风口等人回头"], qianyu: "自助者天助，自渡者天渡", interpretation: "今日靠自己的力量。"},
+                    { stars: 4, yi: ["把走过的霜地都当成风景", "回来时仍是出发时的样子"], ji: ["回头时责怪路太难走", "把经历过的冷变成刺向别人的冰"], qianyu: "回首向来萧瑟处，归去，也无风雨也无晴", interpretation: "今日回首过往，一切都是风景。"}
+                ]
+            },
+            {
+                id: "shuxue",
+                name: "漱雪",
+                teaName: "茉莉绿茶",
+                season: "冬",
+                image: "images/product_shuxue.jpg",
+                portrait: "images/%E6%BC%B1%E9%9B%AA.jpg",
+                category: "花茶",
+                story: "大雪封山之后，另一个女子出现了。她喜欢在雪地里走，留下一串浅浅的脚印。她走到梅树下，仰头看枝头的积雪。风吹过，雪落了她一身，她也不拂，只是站在那里，像是自己也成了一株梅。她叫漱雪——南方有雪不易。",
+                flavor: "茉莉清香，如雪后初晴。入口鲜灵，有茉莉花的清雅与绿茶的鲜爽。",
+                brewing: "水温80-85°C，投茶4g，注水120ml，15秒出汤，可续水4-5次。",
+                value: "福建茉莉花茶传统窨制工艺，七窨一提，花香入骨。",
+                tags: ["花茶", "绿茶", "冬茶", "清香"],
+                fortunes: [
+                    { stars: 3, yi: ["一个人走一段安静的路", "把声音放轻"], ji: ["非要填补所有的安静", "在人群里假装自己不存在"], qianyu: "此时无声胜有声，别有幽愁暗恨生", interpretation: "今日适合独处、冥想。"},
+                    { stars: 3, yi: ["站在雪地里什么都不做", "让该落下的落下来"], ji: ["急着要一个结果", "用手去接正在下的雪"], qianyu: "雪落大地本无声，万物静观皆自得", interpretation: "今日顺其自然，不必急于求成。"},
+                    { stars: 4, yi: ["等雪停了再出门", "记住这场雪的形状"], ji: ["追着每一朵飘过的云", "把安静当成空"], qianyu: "夜深知雪重，时闻折竹声", interpretation: "今日适合收藏、记录。"},
+                    { stars: 2, yi: ["在沉默里休息", "允许自己暂时不想说话"], ji: ["用喧闹来填补安静", "非要在安静里找话说"], qianyu: "沉默是金，言多必失", interpretation: "今日稍显沉寂，静心做事。"},
+                    { stars: 4, yi: ["把雪扫到一边给后来的人走", "在安静中完成一件事"], ji: ["用自己的安静去量别人的喧哗", "把沉默当成武器"], qianyu: "桃李不言，下自成蹊", interpretation: "今日默默做事，自然会有人注意到。"},
+                    { stars: 3, yi: ["融化时不做声", "离开时不告别"], ji: ["把自己的安静强加给别人"], qianyu: "来如春梦不多时，去似朝云无觅处", interpretation: "今日适合告别、放手。"}
+                ]
+            },
+            {
+                id: "shuyue",
+                name: "漱月",
+                teaName: "茉莉红茶",
+                season: "冬",
+                image: "images/product_shuyue.jpg",
+                portrait: "images/%E6%BC%B1%E6%9C%88.jpg",
+                category: "花茶",
+                story: "月圆那夜，有人在溪边掬水。水里有月亮的倒影，她掬起来，月亮就碎了；再掬，又圆了。她一遍一遍地掬，像是在玩一个永远不会腻的游戏。她的影子落在水面上，和月亮混在一起，分不清哪个是她，哪个是月。她叫漱月——是用溪水洗月亮的人。",
+                flavor: "花香与茶香交融，如月光如水。入口甜润，茉莉的清与红茶的醇相得益彰。",
+                brewing: "水温90-95°C，投茶5g，注水150ml，25秒出汤，可续水5-6次。",
+                value: "福建茉莉花与红茶的完美结合，创新工艺，限量发售。",
+                tags: ["花茶", "红茶", "冬茶", "甜香"],
+                fortunes: [
+                    { stars: 4, yi: ["弯下腰去捞水里的东西", "再做一次那件你喜欢的事"], ji: ["只想着捞到的那一轮", "忘了此刻弯腰的姿势很美"], qianyu: "掬水月在手，弄花香满衣", interpretation: "今日重在过程而非结果，享受当下。"},
+                    { stars: 3, yi: ["明知捞不起还要再试一次", "把没有结果的过程也过好"], ji: ["把结果当作唯一的意义", "抱怨水太深月太远"], qianyu: "纵浪大化中，不喜亦不惧", interpretation: "今日看淡得失，顺其自然。"},
+                    { stars: 5, yi: ["赴一个约", "写一封很久没写的信"], ji: ["计算这件事值不值得", "等一个确定的结果才出发"], qianyu: "两情若是久长时，又岂在朝朝暮暮", interpretation: "大吉之日！正缘出现、感情升温。"},
+                    { stars: 3, yi: ["在水边多坐一会儿", "把没有说完的话说完"], ji: ["等月亮落到你手里才肯相信", "把浪漫当成不切实际"], qianyu: "此情可待成追忆，只是当时已惘然", interpretation: "今日适合与旧友重逢。"},
+                    { stars: 3, yi: ["重复一件让你安心的小事", "把简单的日子过慢"], ji: ["总想找到意义才肯开始", "以为浪漫必须轰轰烈烈"], qianyu: "人间有味是清欢，偷得浮生半日闲", interpretation: "今日享受简单的快乐。"},
+                    { stars: 4, yi: ["把这一次的月亮和上一次的比较", "记住你弯着腰的样子"], ji: ["以为下次还有同样的月亮", "把捞起来的月当成真的"], qianyu: "人生若只如初见，何事秋风悲画扇", interpretation: "今日适合保持初心。"}
+                ]
+            },
+            {
+                id: "moli",
+                name: "莫离",
+                teaName: "茉莉银针",
+                season: "四时",
+                image: "images/product_moli.jpg",
+                portrait: "images/%E8%8E%AB%E7%A6%BB.jpg",
+                category: "花茶",
+                story: "这些人来来去去，但总有一个人一直在。她住在山脚下那间小屋，屋前种着茉莉。花开的时候，满院子都是白的。她采花，晾花，然后把花收进瓷罐里，一层一层地铺好。有人问她为什么总是不离开，她指了指那罐花，又指了指自己。她叫莫离——花与人，都不分离。",
+                flavor: "茉莉银针，如始终如一的守候。入口甘甜，花香持久，回味悠长。",
+                brewing: "水温85-90°C，投茶5g，注水150ml，20秒出汤，可续水7-10次。",
+                value: "福建茉莉花茶巅峰之作，银针为骨，茉莉为魂，四时皆宜。",
+                tags: ["花茶", "白茶", "四时", "经典"],
+                fortunes: [
+                    { stars: 5, yi: ["回到那个一直等你的人身边", "给等了很久的人一个信"], ji: ["把陪伴当成理所当然", "去追逐远处忽明忽暗的光"], qianyu: "执子之手，与子偕老", interpretation: "大吉之日！适合表白、订婚、结婚。"},
+                    { stars: 3, yi: ["在原地多站一会儿", "等那个走远的人回头"], ji: ["追出去又折回来", "把等待变成怨"], qianyu: "两情若是久长时，又岂在朝朝暮暮", interpretation: "今日适合等待与守候。"},
+                    { stars: 4, yi: ["做那个先开口的人", "把说不出口的话换一种方式"], ji: ["等对方先走一步才肯挽留", "把沉默当成还在"], qianyu: "莫愁前路无知己，天下谁人不识君", interpretation: "今日适合主动社交。"},
+                    { stars: 3, yi: ["守好自己的位置", "在变动中做那个不变的人"], ji: ["为了留下而留下", "把执念当成深情"], qianyu: "我自不动如山，任他东西南北风", interpretation: "今日坚守本心。"},
+                    { stars: 3, yi: ["把日常的茶烧上", "把该说的话在能说的时候说了"], ji: ["以为来日方长就慢慢来", "把想说的话留到明天"], qianyu: "花开堪折直须折，莫待无花空折枝", interpretation: "今日珍惜眼前人。"},
+                    { stars: 4, yi: ["陪那个需要陪的人坐一坐", "成为别人的南山帖"], ji: ["只在需要时才想起回来", "把不离开当成负担"], qianyu: "但愿人长久，千里共婵娟", interpretation: "今日适合陪伴家人、朋友。"}
+                ]
+            },
+            {
+                id: "guilan",
+                name: "桂兰",
+                teaName: "肉桂",
+                season: "秋",
+                image: "images/product_guilan.jpg",
+                portrait: "images/%E6%A1%82%E5%85%B0.jpg",
+                category: "乌龙茶",
+                story: "秋天深了，山里的桂树与兰草同开。桂是浓的，香得热烈，隔着几道弯都能闻见；兰是淡的，清清冷冷，不走近便不知道。有个人，她身上既有桂的冲，又有兰的静。她走路带风，说话却轻；她性子烈，却从不伤人。山里人都说，她像一壶滚水冲下去的肉桂——初闻凌厉，再品回甘。她叫桂兰，是秋天最复杂的那一口。",
+                flavor: "桂皮辛香，如秋山深处。入口醇厚，岩韵显赫，辛辣中带花果香，回甘持久。",
+                brewing: "水温98°C，投茶8g，注水120ml，15秒出汤，可续水7-9次。",
+                value: "政和高山岩茶产区，肉桂品种，岩骨花香，越品越有层次。",
+                tags: ["乌龙茶", "岩茶", "秋茶", "岩韵"],
+                fortunes: [
+                    { stars: 4, yi: ["做一件需要胆量的事", "把藏在心里的锋芒亮出来"], ji: ["把棱角磨得太圆", "怕伤人就什么都不说"], qianyu: "路遥知马力，日久见人心", interpretation: "今日适合展现真实的自己。" },
+                    { stars: 3, yi: ["慢慢品，别急着下判断", "给自己多一点时间"], ji: ["被第一口的冲吓退", "以为浓烈就是全部"], qianyu: "浅尝辄止失真味，细品方知其中意", interpretation: "今日事物不如表面所见，耐心深究。" },
+                    { stars: 5, yi: ["趁势而上", "把犹豫变成行动"], ji: ["等万事俱备再出发", "把锐气藏在心里不动"], qianyu: "长风破浪会有时，直挂云帆济沧海", interpretation: "大吉之日！势如破竹，适合出击。" },
+                    { stars: 2, yi: ["收敛锋芒，静观其变", "让烈火先烧一会儿"], ji: ["锋芒太露招人忌", "硬碰硬伤的是自己"], qianyu: "刚者易折，柔者长存", interpretation: "今日运势偏低，宜守不宜攻。" },
+                    { stars: 4, yi: ["与强者同行", "在复杂中找到自己的位置"], ji: ["孤军深入", "用蛮力解复杂的结"], qianyu: "山高月小，水落石出", interpretation: "今日拨云见日，真相自显。" },
+                    { stars: 3, yi: ["外刚内柔地对待今天", "把强硬留给事，把温柔留给人"], ji: ["对什么都一样冲", "把温柔当成软弱"], qianyu: "心有猛虎，细嗅蔷薇", interpretation: "今日刚柔并济方为上策。" }
+                ]
+            }
+        ],
+
+            {
+                id: "buzhi",
+                name: "步止",
+                teaName: "白茶饼",
+                season: "传说",
+                image: "./用户上传/photo-1777917086577.jpg",
+                portrait: "./白茶品牌/山客形象/步止.jpg",
+                category: "白茶",
+                story: "他走了很远很远的路，终于在这座山前停下来。不是走不动了，而是觉得，这里就是他要找的地方。他没有名字，来时无名，去时也无名。偶尔有人问他从哪里来，他只是指一指身后的云。有人问他叫什么，他说叫步止——不是止步不前，而是知道该在哪里停下来。他养了一条德国牧羊犬，取名守望。守望守望，守在这里，等那些走累了的旅人。",
+                flavor: "醇厚甘甜，如秋日暖阳。入口绵柔，有枣香与药香，回甘悠长。",
+                brewing: "水温100°C，投茶5g，注水150ml，30秒出汤，可续水8-10次。",
+                value: "政和白茶核心产区，陈化多年，滋味醇厚，具收藏价值。",
+                tags: ["白茶", "传说", "陈茶", "珍藏"],
+                fortunes: [
+                    { stars: 5, yi: ["停下来看看风景", "在正确的位置驻足"], ji: ["用别人的地图走自己的路", "以为停下就是失败"], qianyu: "行到水穷处，坐看云起时", interpretation: "大吉之日！适合停下脚步，审视方向。" },
+                    { stars: 4, yi: ["等一等再决定", "在变动中守住本心"], ji: ["急于给出答案", "把等待当成逃避"], qianyu: "知止而后有定，定而后能静", interpretation: "今日适合静心思考，不宜冒进。" },
+                    { stars: 3, yi: ["承认自己需要休息", "允许慢一点"], ji: ["用忙碌来掩饰迷茫", "假装自己什么都知道"], qianyu: "止于至善，方得始终", interpretation: "今日适合修心养性。" },
+                    { stars: 4, yi: ["选择那条少有人走的路", "坚持自己相信的"], ji: ["被别人的选择带走", "以为停下来就是落后"], qianyu: "不积跬步，无以至千里；不积小流，无以成江海", interpretation: "今日适合积累与沉淀。" },
+                    { stars: 3, yi: ["在山脚仰望山顶", "记住此刻的心情"], ji: ["以为山顶就是终点", "急着赶路忘了出发的原因"], qianyu: "山高人为峰，路远脚更长", interpretation: "今日适合规划与展望。" },
+                    { stars: 4, yi: ["给走过的路一个总结", "感谢陪你走过的人"], ji: ["沉溺在过去的风景里出不来", "以为离开就是背叛"], qianyu: "回首向来萧瑟处，归去，也无风雨也无晴", interpretation: "今日适合回顾与感恩。" }
+                ]
+            },
+            {
+                id: "tingzong",
+                name: "听枞",
+                teaName: "老枞",
+                season: "秋",
+                image: "./用户上传/B501B54E-C250-49E1-9B96-123EF9A9F689_1777917106362_yw33.png",
+                portrait: "./白茶品牌/山客形象/听枞.jpg",
+                category: "乌龙茶",
+                story: "深山里有棵老枞，树龄已不可考。他常坐在树下，听风穿过枝叶的声音。风来时，树叶沙沙响，像是在说些什么。他听了几十年，从少年听到白头，终于听懂了——原来风什么也没说，是他自己心里有话。他养了条边牧，取名风声。风声风声，风过留声，人过留名。",
+                flavor: "枞韵幽深，如老林古道。入口醇厚，有苔藓味与粽叶香，回甘绵长。",
+                brewing: "水温98°C，投茶8g，注水120ml，15秒出汤，可续水7-9次。",
+                value: "政和高山老枞茶树，树龄逾百年，枞韵独特，极具品鉴价值。",
+                tags: ["乌龙茶", "老枞", "秋茶", "枞韵"],
+                fortunes: [
+                    { stars: 4, yi: ["在安静中倾听", "听见那些被忽略的声音"], ji: ["急于说话忘了听", "把沉默当成空洞"], qianyu: "此时无声胜有声，别有幽愁暗恨生", interpretation: "今日适合倾听而非表达。" },
+                    { stars: 3, yi: ["给自己一段独处的时间", "在喧嚣中保持安静"], ji: ["用声音填满所有空隙", "以为沉默就是冷漠"], qianyu: "深山听风雨，静坐悟禅心", interpretation: "今日适合独处与冥想。" },
+                    { stars: 4, yi: ["说出那些藏在心里的话", "让别人听见你的声音"], ji: ["一味地听忘了说", "把倾听当成逃避的借口"], qianyu: "言为心声，语到情深处", interpretation: "今日适合表达与沟通。" },
+                    { stars: 5, yi: ["赴一场重要的约", "说出那句等了很久的话"], ji: ["把想说的藏在心里", "等一个永远不会来的时机"], qianyu: "山鸣翠鸟应相问，风送松涛来共鸣", interpretation: "大吉之日！正缘将至，贵人相助。" },
+                    { stars: 3, yi: ["听听身边人的想法", "换位思考理解他人"], ji: ["只顾着说自己忘了听", "把倾听当成评判的准备"], qianyu: "兼听则明，偏信则暗", interpretation: "今日适合沟通与理解。" },
+                    { stars: 4, yi: ["记住今天听到的话", "用心去感受而非耳朵"], ji: ["只听想听的", "用耳朵代替心"], qianyu: "闻声悟道，见性明心", interpretation: "今日适合感悟与领悟。" }
+                ]
+            },
+            {
+                id: "tianxiang",
+                name: "天香",
+                teaName: "大红袍",
+                season: "秋",
+                image: "./用户上传/AEAD773C-7E68-4BDA-B967-3A781EEF9053_1777917106874_rjkq.png",
+                portrait: "./白茶品牌/山客形象/天香.jpg",
+                category: "乌龙茶",
+                story: "他不是茶人，但他爱茶。他不懂制茶，但他懂品茶。他住在山间一处僻静院落，院中植兰养桂，墙上挂着一幅「天香」的匾额。有人问天香是什么意思，他说天香就是天上的香气，不是人间能有的。有人再问，那你为什么喜欢，他说，因为人间太苦，需要一点天上的味道。他养了条罗威纳，取名王者。王者王者，王者风范，不怒自威。",
+                flavor: "岩骨花香，如深山幽谷。入口醇厚，岩韵显赫，香气馥郁有层次。",
+                brewing: "水温98°C，投茶8g，注水120ml，15秒出汤，可续水7-9次。",
+                value: "政和岩茶核心产区，大红袍品种，岩骨花香，品质上乘。",
+                tags: ["乌龙茶", "大红袍", "秋茶", "岩韵"],
+                fortunes: [
+                    { stars: 5, yi: ["展现真正的自己", "让内在的光芒散发出来"], ji: ["假装平凡来迎合他人", "把锋芒藏得太深"], qianyu: "天生我材必有用，千金散尽还复来", interpretation: "大吉之日！王者之气，势不可挡。" },
+                    { stars: 4, yi: ["做那个领路的人", "主动承担起责任"], ji: ["躲在人群后面", "把机会让给别人"], qianyu: "会当凌绝顶，一览众山小", interpretation: "今日适合领导与决断。" },
+                    { stars: 3, yi: ["欣赏自己的独特之处", "接受不完美的自己"], ji: ["拿自己的短处比别人的长处", "假装什么都不需要"], qianyu: "梅须逊雪三分白，雪却输梅一段香", interpretation: "今日适合自我肯定。" },
+                    { stars: 4, yi: ["相信自己的判断", "坚持走自己的路"], ji: ["被质疑声动摇", "为了合群放弃立场"], qianyu: "路漫漫其修远兮，吾将上下而求索", interpretation: "今日适合坚持与突破。" },
+                    { stars: 3, yi: ["收敛锋芒，以退为进", "在强硬与柔软间找到平衡"], ji: ["锋芒太露伤了自己", "太过柔软失去了自己"], qianyu: "刚柔并济，方为上策", interpretation: "今日刚柔并济方为上。" },
+                    { stars: 4, yi: ["为他人撑起一片天", "成为值得依靠的人"], ji: ["假装强大掩饰脆弱", "把所有责任都扛在自己身上"], qianyu: "长风破浪会有时，直挂云帆济沧海", interpretation: "今日适合担当与付出。" }
+                ]
+            },
+            {
+                id: "wuji",
+                name: "无羁",
+                teaName: "17年白茶饼",
+                season: "传说",
+                image: "./用户上传/208CC47A-4737-4BB1-A9BD-58B908E5C118_1777917237993_vaev.png",
+                portrait: "./白茶品牌/山客形象/无羁.jpg",
+                category: "白茶",
+                story: "他骑马走过很多地方，见识过很多风景，但他从不在任何一个地方停留太久。不是无情，而是怕情深。他觉得自己像一阵风，吹过就算了，不该留下什么。但有一年，他来到南山，遇到一条灵缇。灵缇追上了他，用鼻子蹭了蹭他的手背。他停了下来，这一停，就是很多年。他给灵缇取名无拘——无拘无束，随遇而安。无拘跟着他，他也跟着无拘。",
+                flavor: "陈香幽远，如岁月沉淀。入口甘醇，有枣香与药香，陈韵悠长。",
+                brewing: "水温100°C，投茶5g，注水150ml，30秒出汤，可续水10次以上。",
+                value: "政和白茶，2017年陈化至今，七年老茶，滋味醇厚，极具收藏价值。",
+                tags: ["白茶", "传说", "老茶", "陈香"],
+                fortunes: [
+                    { stars: 5, yi: ["来一场说走就走的旅行", "打破那些束缚你的规则"], ji: ["被旧地图绑住脚步", "害怕改变而不敢出发"], qianyu: "海阔凭鱼跃，天高任鸟飞", interpretation: "大吉之日！适合突破与改变。" },
+                    { stars: 4, yi: ["放下那些执念", "允许一切发生"], ji: ["抓着不放", "试图控制一切"], qianyu: "缘起缘灭皆自然，来去自如心自安", interpretation: "今日适合放下与释然。" },
+                    { stars: 3, yi: ["做一件从未做过的事", "给生活一点新鲜感"], ji: ["用旧习惯过每一天", "拒绝任何改变"], qianyu: "问渠那得清如许，为有源头活水来", interpretation: "今日适合尝试与探索。" },
+                    { stars: 4, yi: ["跟随内心的声音", "不被外界的声音左右"], ji: ["被别人的期待绑架", "活在别人的眼里"], qianyu: "他人骑驴我骑驴，回头看尽是痴人", interpretation: "今日适合找回自我。" },
+                    { stars: 3, yi: ["在自由中保持自律", "享受孤独但不孤单"], ji: ["以为自由就是放纵", "把孤独当成借口"], qianyu: "独行快，众行远；自律者，自由人", interpretation: "今日平衡自由与责任。" },
+                    { stars: 4, yi: ["感谢陪你走过的人", "珍惜每一段同行"], ji: ["以为离开就是背叛", "抓着不放也成了束缚"], qianyu: "聚散皆是缘，离合总关情", interpretation: "今日适合珍惜与感恩。" }
+                ]
+            },
+            {
+                id: "nanshan",
+                name: "南山",
+                teaName: "马年茶饼",
+                season: "传说",
+                image: "./用户上传/1A926B8E-72CC-4C9D-9769-786BA354FB29_1777917244865_tltf.png",
+                portrait: "./白茶品牌/山客形象/南山.jpg",
+                category: "白茶",
+                story: "这座山没有名字，山里的人就叫它南山。后来，有个孩子出生在山下，属马那年家里做了批茶饼，有人问这茶叫什么，他说叫马年茶。后来这孩子长大了，成了山里的守护者。人们不知道他的名字，只叫他南山——山不需要名字，山就是山。他养了条藏獒，取名厚重。厚重厚重，沉稳厚重，是山的气质，也是他的。",
+                flavor: "沉稳厚实，如南山之重。入口绵长，有陈香与木质香，回甘悠远。",
+                brewing: "水温100°C，投茶5g，注水150ml，30秒出汤，可续水10次以上。",
+                value: "政和白茶，2012年马年茶饼，陈化十余年，滋味醇厚，收藏珍品。",
+                tags: ["白茶", "传说", "老茶", "珍藏"],
+                fortunes: [
+                    { stars: 4, yi: ["扛起该扛的责任", "成为别人的依靠"], ji: ["把不属于自己的重担也背上", "假装坚强不求助"], qianyu: "山不在高，有仙则名；水不在深，有龙则灵", interpretation: "今日适合担当与支撑。" },
+                    { stars: 5, yi: ["相信自己的判断", "坚守本心不动摇"], ji: ["被风雨动摇根基", "随波逐流失去方向"], qianyu: "咬定青山不放松，立根原在破岩中", interpretation: "大吉之日！稳如南山。" },
+                    { stars: 3, yi: ["给生活留白", "允许自己喘口气"], ji: ["把自己逼得太紧", "以为停下来就是逃避"], qianyu: "采菊东篱下，悠然见南山", interpretation: "今日适合休憩与放松。" },
+                    { stars: 4, yi: ["做一个长远的规划", "为未来播种"], ji: ["只看眼前不顾长远", "把今天当成末日来过"], qianyu: "不谋万世者，不足谋一时", interpretation: "今日适合规划与布局。" },
+                    { stars: 3, yi: ["记住走过的路", "感谢帮助过你的人"], ji: ["忘记来时的路", "把一切当作理所当然"], qianyu: "吃水不忘挖井人，乘凉记得种树人", interpretation: "今日适合感恩与铭记。" },
+                    { stars: 4, yi: ["传承那些值得传承的", "让美好延续下去"], ji: ["只顾自己忘了后人", "把好东西藏起来不分享"], qianyu: "前人栽树后人乘凉，前事不忘后事之师", interpretation: "今日适合传承与分享。" }
+                ]
+            },
+            {
+                id: "banjian",
+                name: "半见",
+                teaName: "陈皮白茶",
+                season: "四时",
+                image: "./用户上传/615de78d9c273d421ecee56eaf40a4_1777917466550_6u9o.jpg",
+                portrait: "./白茶品牌/山客形象/半见.jpg",
+                category: "白茶",
+                story: "她喜欢躲在帘子后面，看外面的人来人往。不是害羞，而是觉得，保持一点距离刚刚好。太近了会腻，太远了会淡。她叫自己半见——半藏半显，半开半合。她养了条法斗，取名若隐。若隐若隐，若有若无，是她喜欢的状态，也是她与这个世界相处的方式。",
+                flavor: "陈皮与白茶交融，如光阴流转。入口甜润，有陈皮的果香与白茶的甘醇。",
+                brewing: "水温95°C，投茶5g，注水150ml，25秒出汤，可续水6-8次。",
+                value: "政和白茶与新会陈皮结合，创新工艺，跨界搭配，风味独特。",
+                tags: ["白茶", "陈皮", "四时", "创新"],
+                fortunes: [
+                    { stars: 4, yi: ["保持神秘感", "让自己有点留白"], ji: ["把一切都展示给人看", "太透明反而失去魅力"], qianyu: "犹抱琵琶半遮面，欲说还休", interpretation: "今日适合保持神秘感。" },
+                    { stars: 5, yi: ["敞开心扉", "让值得的人走进你的世界"], ji: ["把自己锁得太紧", "永远保持距离"], qianyu: "众里寻他千百度，蓦然回首，那人却在灯火阑珊处", interpretation: "大吉之日！正缘将至。" },
+                    { stars: 3, yi: ["学会独处", "享受与自己相处的时光"], ji: ["害怕独处用喧嚣填满时间", "以为必须有人陪才是正常的"], qianyu: "独处时品茗，自有一番风味", interpretation: "今日适合独处与自省。" },
+                    { stars: 4, yi: ["在进与退之间找到平衡", "拿捏好分寸"], ji: ["太进让人喘不过气", "太退让人以为你不在乎"], qianyu: "近而不远，亲而不腻，方为长久之道", interpretation: "今日适合把握分寸。" },
+                    { stars: 3, yi: ["看透不说透", "有些事心知肚明即可"], ji: ["什么都要说破", "把透明当成真诚"], qianyu: "看破不说破，知人不评人，是为智慧", interpretation: "今日难得糊涂。" },
+                    { stars: 4, yi: ["给自己一个缓冲区", "不急着回应一切"], ji: ["秒回所有信息", "让自己疲于应对"], qianyu: "慢半拍的生活，也许刚刚好", interpretation: "今日适合慢下来。" }
+                ]
+            }
+
+
+        const SECRET_FORTUNE = {
+            stars: 3,
+            yi: ["静坐片刻", "深呼吸", "喝一盏茶"],
+            ji: ["继续追问", "焦虑不安", "盲目行动"],
+            qianyu: "今日你心有彷徨，连求三签，不如静坐片刻，茶汤之中自有答案",
+            interpretation: "有时候，答案不在签文里，而在一盏茶的宁静之中。"
+        };
+
+        /* ================================================================
+         * 全局变量
+         * ================================================================ */
+        let currentUserName = '';
+        let selectedProduct = null;
+        let drawCount = 0;
+        let rotationAngle = 0;
+        let isRotating = true;
+        let resultAction = '';
+        let introEnded = false;
+
+        /* ================================================================
+         * 开篇动画 - 纯笔墨书法
+         * ================================================================ */
+        const introPage = document.getElementById('introPage');
+        const inkDrop = document.getElementById('inkDrop');
+        const inkSplash = document.getElementById('inkSplash');
+        const charYi = document.getElementById('charYi');
+        const charEr = document.getElementById('charEr');
+        const charSan = document.getElementById('charSan');
+        const sanmuContainer = document.getElementById('sanmuContainer');
+        const introBrand = document.getElementById('introBrand');
+        const introInputSection = document.getElementById('introInputSection');
+        const introBtn = document.getElementById('introBtn');
+        const userNameInput = document.getElementById('userNameInput');
+
+        userNameInput.addEventListener('input', () => {
+            introBtn.classList.toggle('show', userNameInput.value.trim().length > 0);
+        });
+
+        function playIntroAnimation() {
+            // 1. 墨滴落下 (0-1.2s)
+            inkDrop.style.animationPlayState = 'running';
+            
+            // 2. 墨迹溅散 (1.2s)
+            setTimeout(() => {
+                inkSplash.classList.add('show');
+            }, 1200);
+            
+            // 3. 显示"南山帖" (2s) - 居中偏上
+            setTimeout(() => {
+                introBrand.classList.add('show');
+            }, 2000);
+            
+            // 4. 显示竖排"南山有四季 / 四季有十二客" (3.5s) - 居中偏下，与南山帖上下呼应
+            setTimeout(() => {
+                const introPoem = document.getElementById('introPoem');
+                introPoem.classList.add('show');
+            }, 3500);
+            
+            // 5. 全部淡出 (6s)
+            setTimeout(() => {
+                introBrand.classList.add('fade-out');
+                const introPoem = document.getElementById('introPoem');
+                introPoem.classList.add('fade-out');
+            }, 6000);
+            
+            // 6. 显示输入框 (7s)
+            setTimeout(() => {
+                // 确保introBrand和introPoem完全隐藏
+                introBrand.style.display = 'none';
+                introBrand.classList.remove('fade-out');
+                const introPoem = document.getElementById('introPoem');
+                introPoem.style.display = 'none';
+                introPoem.classList.remove('fade-out');
+                // 显示输入框，背景干净无文字
+                introInputSection.classList.add('show');
+            }, 7000);
+        }
+
+        function skipIntro() {
+            if (introEnded) return;
+            introEnded = true;
+            // 跳过动画，隐藏所有开篇元素，直接进入山客选择页
+            introPage.style.display = 'none';
+            enterYimuPage();
+        }
+        
+        // 输入名字后进入圣杯仪式
+        function goToYimu() {
+            const name = userNameInput.value.trim();
+            if (!name) { userNameInput.focus(); return; }
+            currentUserName = name;
+            introEnded = true;
+            introPage.classList.add('ended');
+            setTimeout(() => {
+                introPage.style.display = 'none';
+                // 显示圣杯仪式
+                showShengbeiDialog();
+            }, 500);
+        }
+        
+        // 圣杯仪式（入场）
+        let hasFirstShengbei = false; // 标记是否已完成入场圣杯
+        function showShengbeiDialog() {
+            const dialog = document.createElement('div');
+            dialog.className = 'shengbei-dialog active';
+            dialog.innerHTML = `
+                <div class="shengbei-title">南山问茶</div>
+                <div class="shengbei-subtitle">掷杯入山，以求山客指引</div>
+                <div class="shengbei-cups" id="shengbeiCups">
+                    <div class="shengbei-cup left"><span class="cup-text">聖</span></div>
+                    <div class="shengbei-cup right"><span class="cup-text">聖</span></div>
+                </div>
+                <div class="shengbei-result" id="shengbeiResult"></div>
+                <div class="shengbei-hint" id="shengbeiHint">点击掷杯</div>
+                <button class="shengbei-btn" onclick="throwShengbei()">掷 杯</button>
+            `;
+            document.body.appendChild(dialog);
+        }
+        
+        function throwShengbei() {
+            const result = Math.random();
+            const cups = document.querySelectorAll('.shengbei-cup');
+            const resultDiv = document.getElementById('shengbeiResult');
+            const hint = document.getElementById('shengbeiHint');
+            const btn = document.querySelector('.shengbei-btn');
+            
+            btn.style.display = 'none';
+            hint.style.display = 'none';
+            
+            // 随机翻转动画
+            cups.forEach(cup => {
+                cup.style.animation = 'cupFlip 0.8s ease-out forwards';
+                cup.style.animationDelay = Math.random() * 0.3 + 's';
+            });
+            
+            // 判定结果
+            setTimeout(() => {
+                // 圣杯（一阳一阴）概率40%，笑杯（两阳）30%，阴杯（两阴）30%
+                // 核心原则：圣杯环节只是仪式感，最多2次必过
+                if (result < 0.4) {
+                    // 圣杯 - 直接通过
+                    cups[0].classList.add('yang');
+                    cups[1].classList.add('yin');
+                    resultDiv.textContent = '圣杯';
+                    resultDiv.className = 'shengbei-result shengbei-success';
+                    resultDiv.style.display = 'block';
+                    hint.style.display = 'block';
+                    hint.textContent = '缘至，请入山';
+                    setTimeout(() => {
+                        closeShengbeiDialog();
+                        enterYimuPage();
+                    }, 1200);
+                } else if (result < 0.7) {
+                    // 笑杯 - 第一次自动再掷，第二次必定圣杯
+                    if (!hasFirstShengbei) {
+                        cups[0].classList.add('yang');
+                        cups[1].classList.add('yang');
+                        resultDiv.textContent = '笑杯';
+                        resultDiv.className = 'shengbei-result shengbei-retry';
+                        resultDiv.style.display = 'block';
+                        hint.style.display = 'block';
+                        hint.textContent = '再掷一次';
+                        hasFirstShengbei = true;
+                        setTimeout(() => {
+                            // 自动再掷，第二次必定圣杯
+                            cups.forEach(c => c.classList.remove('yang', 'yin'));
+                            cups[0].classList.add('yang');
+                            cups[1].classList.add('yin');
+                            resultDiv.textContent = '圣杯';
+                            resultDiv.className = 'shengbei-result shengbei-success';
+                            hint.textContent = '缘至，请入山';
+                            setTimeout(() => {
+                                closeShengbeiDialog();
+                                enterYimuPage();
+                            }, 1200);
+                        }, 1000);
+                    } else {
+                        // 第二次还出笑杯，强制圣杯
+                        cups[0].classList.add('yang');
+                        cups[1].classList.add('yin');
+                        resultDiv.textContent = '圣杯';
+                        resultDiv.className = 'shengbei-result shengbei-success';
+                        hint.textContent = '缘至，请入山';
+                        setTimeout(() => {
+                            closeShengbeiDialog();
+                            enterYimuPage();
+                        }, 1200);
+                    }
+                } else {
+                    // 阴杯 - 直接再掷一次，必出圣杯
+                    cups[0].classList.add('yin');
+                    cups[1].classList.add('yin');
+                    resultDiv.textContent = '阴杯';
+                    resultDiv.className = 'shengbei-result shengbei-fail';
+                    resultDiv.style.display = 'block';
+                    hint.style.display = 'block';
+                    hint.textContent = '再掷一次';
+                    setTimeout(() => {
+                        // 必定出圣杯
+                        cups.forEach(c => c.classList.remove('yang', 'yin'));
+                        cups[0].classList.add('yang');
+                        cups[1].classList.add('yin');
+                        resultDiv.textContent = '圣杯';
+                        resultDiv.className = 'shengbei-result shengbei-success';
+                        hint.textContent = '缘至，请入山';
+                        setTimeout(() => {
+                            closeShengbeiDialog();
+                            enterYimuPage();
+                        }, 1200);
+                    }, 1000);
+                }
+            }, 800);
+        }
+        
+        function enterYimuPage() {
+            document.getElementById('yimuPage').classList.add('active');
+            document.getElementById('navBar').style.display = 'flex';
+            renderGuests();
+        }
+        
+        function closeShengbeiDialog() {
+            const dialog = document.querySelector('.shengbei-dialog');
+            if (dialog) dialog.remove();
+        }
+        
+        // 选择山客后直接进入签文结果页（不再掷杯）
+        function selectGuest(product) {
+            selectedProduct = product;
+            
+            // 关闭所有弹窗，确保圣杯页面不残留
+            closeShengbeiDialog();
+            const dialogs = document.querySelectorAll('.shengbei-dialog');
+            dialogs.forEach(d => d.remove());
+            
+            // 隐藏所有可能干扰的页面
+            document.getElementById('yimuPage').classList.remove('active');
+            document.getElementById('divinationPage').style.display = 'none';
+            document.getElementById('divResult').style.display = 'none';
+            document.getElementById('navBar').style.display = 'none';
+            
+            // 直接显示签文结果
+            showResult();
+        }
+
+        // 启动开篇动画
+        playIntroAnimation();
+
+        /* ================================================================
+         * 渲染山客形象
+         * ================================================================ */
+        function renderGuests() {
+            const grid = document.getElementById('guestsGrid');
+            grid.innerHTML = '';
+            PRODUCTS.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'guest-card';
+                card.innerHTML = `
+                    <img src="${product.portrait}" alt="${product.name}" loading="lazy">
+                    <div class="guest-card-glow"></div>
+                    <div class="guest-card-info">
+                        <div class="guest-card-name">${product.name}</div>
+                        <div class="guest-card-season">${product.season}</div>
+                    </div>
+                `;
+                card.onclick = () => selectGuest(product);
+                grid.appendChild(card);
+            });
+        }
+        /* ================================================================
+         * 渲染签文
+         * ================================================================ */
+        function renderQianwen(product, fortune) {
+            document.getElementById('qianwenUser').textContent = '南山山客 · ' + currentUserName;
+            document.getElementById('qianwenGuest').textContent = product.name;
+            document.getElementById('qianwenTea').textContent = product.teaName;
+            document.getElementById('qianwenStars').textContent = '★'.repeat(fortune.stars) + '☆'.repeat(5 - fortune.stars);
+            document.getElementById('qianwenYi').innerHTML = fortune.yi.map(y => '<div class="qianwen-item">· ' + y + '</div>').join('');
+            document.getElementById('qianwenJi').innerHTML = fortune.ji.map(j => '<div class="qianwen-item ji">✗ ' + j + '</div>').join('');
+            document.getElementById('qianwenQianyu').textContent = fortune.qianyu;
+            document.getElementById('qianwenInterp').textContent = fortune.interpretation;
+            document.getElementById('qianwenImg').src = product.image;
+        }
+
+        /* ================================================================
+         * 显示签文
+         * ================================================================ */
+        function showResult() {
+            const fortune = selectedProduct.fortunes[Math.floor(Math.random() * selectedProduct.fortunes.length)];
+
+            document.getElementById('resultDate').textContent = getDate() + ' · 今日茶运';
+            document.getElementById('resultUser').textContent = '南山山客 · ' + currentUserName;
+            document.getElementById('guestTitle').textContent = selectedProduct.name;
+            document.getElementById('teaTitle').textContent = selectedProduct.teaName;
+            document.getElementById('stars').textContent = '★'.repeat(fortune.stars) + '☆'.repeat(5 - fortune.stars);
+            document.getElementById('yiContent').innerHTML = fortune.yi.join('<br>');
+            document.getElementById('jiContent').innerHTML = fortune.ji.join('<br>');
+            document.getElementById('qianyuText').textContent = fortune.qianyu;
+            document.getElementById('interpretation').textContent = fortune.interpretation;
+            document.getElementById('resultImg').src = selectedProduct.image;
+            document.getElementById('resultStory').textContent = selectedProduct.story;
+
+            // 分享数据
+            document.getElementById('shareUser').textContent = '南山山客 · ' + currentUserName;
+            document.getElementById('shareDate').textContent = getDate() + ' · 今日茶运';
+            document.getElementById('shareGuest').textContent = selectedProduct.name;
+            document.getElementById('shareTea').textContent = selectedProduct.teaName;
+            document.getElementById('shareStars').textContent = '★'.repeat(fortune.stars) + '☆'.repeat(5 - fortune.stars);
+            document.getElementById('shareQianyu').textContent = fortune.qianyu;
+            document.getElementById('shareImg').src = selectedProduct.image;
+
+            // 直接显示签文结果页
+            document.getElementById('resultPage').classList.add('active');
+        }
+
+        function reDraw() {
+            // 隐藏签文结果，显示山客选择页
+            document.getElementById('resultPage').classList.remove('active');
+            document.getElementById('yimuPage').classList.add('active');
+            // 显示导航栏
+            document.getElementById('navBar').style.display = 'flex';
+            // 重新渲染山客
+            renderGuests();
+        }
+
+        /* ================================================================
+         * 二林：旋转阵法
+         * ================================================================ */
+        function initRotationWheel() {
+            const wheel = document.getElementById('rotationWheel');
+            wheel.querySelectorAll('.wheel-item').forEach(i => i.remove());
+            PRODUCTS.forEach(p => {
+                const item = document.createElement('div');
+                item.className = 'wheel-item';
+                // 使用山客水墨形象图（portrait字段），不是产品包装图
+                item.innerHTML = `<img class="wheel-item-img" src="${p.portrait}" alt="${p.name}" loading="lazy"><div class="wheel-item-name">${p.name}</div>`;
+                item.onclick = () => openProductDetail(p);
+                wheel.appendChild(item);
+            });
+            updateWheelPositions();
+            startRotation();
+            setupWheelTouch();
+        }
+
+        function updateWheelPositions() {
+            const wheel = document.getElementById('rotationWheel');
+            const items = wheel.querySelectorAll('.wheel-item');
+            const cx = 140, cy = 140, r = 95, c = items.length;
+            items.forEach((item, i) => {
+                const a = (i / c) * 360 + rotationAngle;
+                const rad = a * Math.PI / 180;
+                item.style.left = (cx + r * Math.sin(rad) - 30) + 'px';
+                item.style.top = (cy + r * Math.cos(rad) - 37) + 'px';
+            });
+        }
+
+        function startRotation() {
+            if (!isRotating) return;
+            rotationAngle += 0.15;
+            updateWheelPositions();
+            requestAnimationFrame(startRotation);
+        }
+
+        function setupWheelTouch() {
+            const wheel = document.getElementById('rotationWheel');
+            let sx = 0, dragging = false;
+            wheel.addEventListener('touchstart', e => { sx = e.touches[0].clientX; dragging = true; isRotating = false; });
+            wheel.addEventListener('touchmove', e => {
+                if (!dragging) return;
+                rotationAngle += (e.touches[0].clientX - sx) * 0.4;
+                sx = e.touches[0].clientX;
+                updateWheelPositions();
+            });
+            wheel.addEventListener('touchend', () => { dragging = false; setTimeout(() => { isRotating = true; startRotation(); }, 2000); });
+        }
+
+        function openProductDetail(product) {
+            document.getElementById('productHero').src = product.image;
+            document.getElementById('productName').textContent = product.name;
+            document.getElementById('productTea').textContent = product.teaName;
+            document.getElementById('productStory').textContent = product.story;
+            document.getElementById('productFlavor').textContent = product.flavor;
+            document.getElementById('productValue').textContent = product.value;
+            document.getElementById('productTags').innerHTML = product.tags.map(t => `<span class="product-tag">${t}</span>`).join('');
+            document.getElementById('productModal').classList.add('show');
+        }
+
+        function closeProductModal() { document.getElementById('productModal').classList.remove('show'); }
+        function contactUs() { document.getElementById('wechatModal').classList.add('show'); }
+        function closeWechatModal() { document.getElementById('wechatModal').classList.remove('show'); }
+
+        /* ================================================================
+         * 三森
+         * ================================================================ */
+        function openCustomForm() { document.getElementById('customForm').classList.add('show'); }
+        function openCorporateForm() { document.getElementById('corporateForm').classList.add('show'); }
+        function closeForm(id) { document.getElementById(id).classList.remove('show'); }
+
+        function submitCustomForm() {
+            if (!document.getElementById('customTaste').value || !document.getElementById('customBudget').value || !document.getElementById('customUsage').value) {
+                showToast('请填写完整信息'); return;
+            }
+            showToast('提交成功！我们会尽快与您联系');
+            closeForm('customForm');
+            ['customTaste', 'customBudget', 'customUsage', 'customContact'].forEach(id => document.getElementById(id).value = '');
+        }
+
+        function submitCorporateForm() {
+            if (!document.getElementById('companyName').value || !document.getElementById('companyNeeds').value) {
+                showToast('请填写公司名称和需求'); return;
+            }
+            showToast('提交成功！我们会尽快与您联系');
+            closeForm('corporateForm');
+            ['companyName', 'companyNeeds', 'companyBudget', 'companyContact', 'companyPhone'].forEach(id => document.getElementById(id).value = '');
+        }
+
+        function openStory() {
+            // 显示三森页面
+            document.getElementById('sanlinPage').classList.add('active');
+            document.getElementById('navBar').style.display = 'none';
+            
+            // 播放文字浮现动画
+            setTimeout(() => {
+                document.getElementById('sanlinLine1').classList.add('show');
+            }, 500);
+            setTimeout(() => {
+                document.getElementById('sanlinLine2').classList.add('show');
+            }, 2500);
+            setTimeout(() => {
+                document.getElementById('sanlinLine3').classList.add('show');
+            }, 4500);
+            setTimeout(() => {
+                document.getElementById('sanlinLine4').classList.add('show');
+            }, 6500);
+            setTimeout(() => {
+                document.getElementById('sanlinLine5').classList.add('show');
+            }, 8500);
+        }
+        
+        function closeStory() {
+            // 隐藏三森页面
+            document.getElementById('sanlinPage').classList.remove('active');
+            document.getElementById('navBar').style.display = 'flex';
+            // 重置动画状态
+            ['sanlinLine1', 'sanlinLine2', 'sanlinLine3', 'sanlinLine4', 'sanlinLine5'].forEach(id => {
+                document.getElementById(id).classList.remove('show');
+            });
+        }
+
+        /* ================================================================
+         * 导航
+         * ================================================================ */
+        function switchTab(tab) {
+            document.querySelectorAll('.nav-dot').forEach(d => d.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            document.querySelectorAll('.page').forEach(p => { if (p.id !== 'introPage') p.classList.remove('active'); });
+            if (tab === 'yimu') document.getElementById('yimuPage').classList.add('active');
+            else if (tab === 'erlin') {
+                document.getElementById('erlinPage').classList.add('active');
+                if (document.getElementById('rotationWheel').children.length <= 1) initRotationWheel();
+            }
+            else if (tab === 'sanlin') document.getElementById('sanlinPage').classList.add('active');
+        }
+
+        /* ================================================================
+         * 工具函数
+         * ================================================================ */
+        function getDate() { const d = new Date(); return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`; }
+        function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
+
+        /* ================================================================
+         * 分享 - 用Canvas直接绘制签文卡片
+         * ================================================================ */
+        async function shareResult() {
+            try {
+                const canvas = document.getElementById('canvas');
+                const ctx = canvas.getContext('2d');
+                const W = 600, H = 900;
+                canvas.width = W; canvas.height = H;
+
+                // 背景
+                ctx.fillStyle = '#F5F0E6';
+                ctx.fillRect(0, 0, W, H);
+
+                // 卡片区域
+                const margin = 30;
+                ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                roundRect(ctx, margin, margin, W - margin*2, H - margin*2, 18);
+                ctx.fill();
+                ctx.strokeStyle = '#D4B68A';
+                ctx.lineWidth = 2;
+                roundRect(ctx, margin, margin, W - margin*2, H - margin*2, 18);
+                ctx.stroke();
+
+                let y = 80;
+                // 品牌
+                ctx.fillStyle = '#A69272';
+                ctx.font = '14px "STSong", serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('三木不为森 · 南山帖', W/2, y);
+
+                y += 35;
+                // 用户
+                ctx.fillStyle = '#5C4A3A';
+                ctx.font = '13px sans-serif';
+                ctx.fillText(document.getElementById('shareUser').textContent + '  ' + document.getElementById('shareDate').textContent, W/2, y);
+
+                y += 50;
+                // 山客名
+                ctx.fillStyle = '#5C4A3A';
+                ctx.font = 'bold 36px "STSong", serif';
+                ctx.fillText(document.getElementById('shareGuest').textContent, W/2, y);
+
+                y += 25;
+                // 茶名
+                ctx.fillStyle = '#A69272';
+                ctx.font = '14px sans-serif';
+                ctx.fillText(document.getElementById('shareTea').textContent, W/2, y);
+
+                y += 30;
+                // 星级
+                ctx.fillStyle = '#D4B68A';
+                ctx.font = '20px sans-serif';
+                ctx.fillText(document.getElementById('shareStars').textContent, W/2, y);
+
+                // 分隔线
+                y += 25;
+                ctx.strokeStyle = 'rgba(212, 182, 138, 0.3)';
+                ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(100, y); ctx.lineTo(W-100, y); ctx.stroke();
+
+                y += 30;
+                // 签语
+                ctx.fillStyle = '#5C4A3A';
+                ctx.font = 'italic 16px "STSong", serif';
+                const qianyu = document.getElementById('shareQianyu').textContent;
+                wrapText(ctx, qianyu, W/2, y, W - 140, 28);
+
+                // 产品图
+                const imgEl = document.getElementById('resultImg');
+                if (imgEl && imgEl.src && imgEl.complete) {
+                    try {
+                        const imgW = 180, imgH = 180;
+                        ctx.drawImage(imgEl, (W - imgW)/2, H - 320, imgW, imgH);
+                    } catch(e) {}
+                }
+
+                // 底部品牌
+                ctx.fillStyle = '#A69272';
+                ctx.font = '12px "STSong", serif';
+                ctx.fillText('扫码添加客服 · 品味南山', W/2, H - 50);
+
+                // 生成图片
+                canvas.toBlob(function(blob) {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.download = '南山帖_茶运.png';
+                    a.href = url;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    showToast('签文已生成，可长按保存分享');
+                }, 'image/png');
+            } catch (e) {
+                showToast('分享生成失败，请截图分享');
+            }
+        }
+
+        // 圆角矩形辅助
+        function roundRect(ctx, x, y, w, h, r) {
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.lineTo(x + w - r, y);
+            ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+            ctx.lineTo(x + w, y + h - r);
+            ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+            ctx.lineTo(x + r, y + h);
+            ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+            ctx.lineTo(x, y + r);
+            ctx.quadraticCurveTo(x, y, x + r, y);
+            ctx.closePath();
+        }
+
+        // 自动换行文字
+        function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+            const chars = text.split('');
+            let line = '';
+            let currentY = y;
+            for (let i = 0; i < chars.length; i++) {
+                const testLine = line + chars[i];
+                const metrics = ctx.measureText(testLine);
+                if (metrics.width > maxWidth && line.length > 0) {
+                    ctx.fillText(line, x, currentY);
+                    line = chars[i];
+                    currentY += lineHeight;
+                } else {
+                    line = testLine;
+                }
+            }
+            ctx.fillText(line, x, currentY);
+        }
+
+        /* ================================================================
+         * 初始化
+         * ================================================================ */
+        window.onload = () => PRODUCTS.forEach(p => { const img = new Image(); img.src = p.image; });
+    </script>
+</body>
+</html>

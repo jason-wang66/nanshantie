@@ -2241,6 +2241,12 @@
             document.getElementById('productStory').textContent = product.story;
             document.getElementById('productFlavor').textContent = product.flavor;
             document.getElementById('productValue').textContent = product.value;
+            if (product.grade) {
+                document.getElementById('productGrade').textContent = product.grade;
+                document.getElementById('productGrade').style.display = 'inline-block';
+            } else {
+                document.getElementById('productGrade').style.display = 'none';
+            }
             document.getElementById('productTags').innerHTML = product.tags.map(t => `<span class="product-tag">${t}</span>`).join('');
             document.getElementById('productModal').classList.add('show');
         }
