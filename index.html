@@ -2620,27 +2620,36 @@
             document.getElementById('giftGuideModal').classList.remove('show');
             document.body.style.overflow = '';
         }
+        function getProductImage(productName) {
+            if (typeof PRODUCTS !== 'undefined') {
+                const product = PRODUCTS.find(p => p.name === productName);
+                if (product && product.image) {
+                    return product.image;
+                }
+            }
+            return 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#F5F0E6" width="70" height="70"/><text x="35" y="40" text-anchor="middle" fill="#A69272" font-size="12">南山帖</text></svg>');
+        }
         const giftData = {
-            '长辈-节日': { name: '履霜', tea: '工夫红茶', reason: '冬日暖意，醇厚甘甜，适合长辈品茗习惯', img: 'https://bai-cha.coze.cn/images/履霜.jpg' },
-            '长辈-生日': { name: '桂兰', tea: '肉桂', reason: '岩骨花香，回味悠长，送长辈的品味之选', img: 'https://bai-cha.coze.cn/images/桂兰.jpg' },
-            '长辈-拜访': { name: '听枞', tea: '老枞', reason: '岁月滋味，山场气韵，拜访长辈的郑重之礼', img: 'https://bai-cha.coze.cn/images/听枞.jpg' },
-            '长辈-日常': { name: '履霜', tea: '工夫红茶', reason: '日常品饮，温润养胃，陪伴每一天', img: 'https://bai-cha.coze.cn/images/履霜.jpg' },
-            '朋友-节日': { name: '不器', tea: '白牡丹', reason: '清新雅致，节日相聚的应景之选', img: 'https://bai-cha.coze.cn/images/不器.jpg' },
-            '朋友-生日': { name: '步止', tea: '12年白茶', reason: '岁月珍藏，情谊沉淀，生日的心意之礼', img: 'https://bai-cha.coze.cn/images/步止.jpg' },
-            '朋友-拜访': { name: '丹桂', tea: '桂花红茶', reason: '花香馥郁，分享一杯的轻松好礼', img: 'https://bai-cha.coze.cn/images/丹桂.jpg' },
-            '朋友-日常': { name: '莫离', tea: '茉莉银针', reason: '清香怡人，年轻人的第一杯好茶', img: 'https://bai-cha.coze.cn/images/莫离.jpg' },
-            '客户-节日': { name: '无羁', tea: '17年白茶', reason: '稀缺老茶，彰显诚意的商务礼遇', img: 'https://bai-cha.coze.cn/images/无羁.jpg' },
-            '客户-生日': { name: '南山', tea: '21马饼', reason: '限量珍藏，高端定制的客户之礼', img: 'https://bai-cha.coze.cn/images/南山.jpg' },
-            '客户-拜访': { name: '天香', tea: '大红袍', reason: '岩茶上品，拜访客户的体面之选', img: 'https://bai-cha.coze.cn/images/天香.jpg' },
-            '客户-日常': { name: '半见', tea: '陈皮白茶', reason: '陈香醇滑，日常维护客户关系', img: 'https://bai-cha.coze.cn/images/半见.jpg' },
-            '恋人-节日': { name: '步止', tea: '12年白茶', reason: '岁月相守，情人节的浪漫之礼', img: 'https://bai-cha.coze.cn/images/步止.jpg' },
-            '恋人-生日': { name: '莫离', tea: '茉莉银针', reason: '茉莉如你，温柔清雅的心意', img: 'https://bai-cha.coze.cn/images/莫离.jpg' },
-            '恋人-拜访': { name: '不器', tea: '白牡丹', reason: '清新相遇，适合见面时的小小心意', img: 'https://bai-cha.coze.cn/images/不器.jpg' },
-            '恋人-日常': { name: '漱月', tea: '茉莉红茶', reason: '甜蜜日常，最长情的陪伴', img: 'https://bai-cha.coze.cn/images/漱月.jpg' },
-            '自己-节日': { name: '无羁', tea: '17年白茶', reason: '犒赏自己，岁月不负有心人', img: 'https://bai-cha.coze.cn/images/无羁.jpg' },
-            '自己-生日': { name: '步止', tea: '12年白茶', reason: '生辰快乐，值得一杯好茶', img: 'https://bai-cha.coze.cn/images/步止.jpg' },
-            '自己-拜访': { name: '浮岚', tea: '福建高山绿茶', reason: '清新一刻，犒赏自己的小确幸', img: 'https://bai-cha.coze.cn/images/浮岚.jpg' },
-            '自己-日常': { name: '漱雪', tea: '茉莉绿茶', reason: '日常口粮茶，简单纯粹', img: 'https://bai-cha.coze.cn/images/漱雪.jpg' }
+            '长辈-节日': { name: '履霜', tea: '工夫红茶', reason: '冬日暖意，醇厚甘甜，适合长辈品茗习惯' },
+            '长辈-生日': { name: '桂兰', tea: '肉桂', reason: '岩骨花香，回味悠长，送长辈的品味之选' },
+            '长辈-拜访': { name: '听枞', tea: '老枞', reason: '岁月滋味，山场气韵，拜访长辈的郑重之礼' },
+            '长辈-日常': { name: '履霜', tea: '工夫红茶', reason: '日常品饮，温润养胃，陪伴每一天' },
+            '朋友-节日': { name: '不器', tea: '白牡丹', reason: '清新雅致，节日相聚的应景之选' },
+            '朋友-生日': { name: '步止', tea: '12年白茶', reason: '岁月珍藏，情谊沉淀，生日的心意之礼' },
+            '朋友-拜访': { name: '丹桂', tea: '桂花红茶', reason: '花香馥郁，分享一杯的轻松好礼' },
+            '朋友-日常': { name: '莫离', tea: '茉莉银针', reason: '清香怡人，年轻人的第一杯好茶' },
+            '客户-节日': { name: '无羁', tea: '17年白茶', reason: '稀缺老茶，彰显诚意的商务礼遇' },
+            '客户-生日': { name: '南山', tea: '21马饼', reason: '限量珍藏，高端定制的客户之礼' },
+            '客户-拜访': { name: '天香', tea: '大红袍', reason: '岩茶上品，拜访客户的体面之选' },
+            '客户-日常': { name: '半见', tea: '陈皮白茶', reason: '陈香醇滑，日常维护客户关系' },
+            '恋人-节日': { name: '步止', tea: '12年白茶', reason: '岁月相守，情人节的浪漫之礼' },
+            '恋人-生日': { name: '莫离', tea: '茉莉银针', reason: '茉莉如你，温柔清雅的心意' },
+            '恋人-拜访': { name: '不器', tea: '白牡丹', reason: '清新相遇，适合见面时的小小心意' },
+            '恋人-日常': { name: '漱月', tea: '茉莉红茶', reason: '甜蜜日常，最长情的陪伴' },
+            '自己-节日': { name: '无羁', tea: '17年白茶', reason: '犒赏自己，岁月不负有心人' },
+            '自己-生日': { name: '步止', tea: '12年白茶', reason: '生辰快乐，值得一杯好茶' },
+            '自己-拜访': { name: '浮岚', tea: '福建高山绿茶', reason: '清新一刻，犒赏自己的小确幸' },
+            '自己-日常': { name: '漱雪', tea: '茉莉绿茶', reason: '日常口粮茶，简单纯粹' }
         };
         document.querySelectorAll('.gift-guide-option').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -2658,7 +2667,7 @@
                 document.getElementById('giftResultName').textContent = result.name;
                 document.getElementById('giftResultTea').textContent = result.tea;
                 document.getElementById('giftResultReason').textContent = result.reason;
-                document.getElementById('giftResultImg').src = result.img;
+                document.getElementById('giftResultImg').src = getProductImage(result.name);
                 document.getElementById('giftGuideResult').classList.add('show');
             }
         }
