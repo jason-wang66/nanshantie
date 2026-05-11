@@ -1032,6 +1032,52 @@
         .h5-qr-section img { width: 100px; border-radius: 8px; }
         .h5-qr-hint { font-size: 12px; color: rgba(212, 182, 138, 0.8); margin-top: 8px; }
 
+
+        /* 以茶寄意 - 送礼推荐入口 */
+        .gift-guide-banner {
+            margin: 30px 20px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(212, 182, 138, 0.12), rgba(212, 182, 138, 0.05));
+            border: 1px solid rgba(212, 182, 138, 0.25);
+            border-radius: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .gift-guide-banner:hover {
+            background: linear-gradient(135deg, rgba(212, 182, 138, 0.18), rgba(212, 182, 138, 0.08));
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 182, 138, 0.15);
+        }
+        .gift-guide-banner-icon { font-size: 28px; margin-bottom: 8px; }
+        .gift-guide-banner-text { font-size: 14px; color: var(--dark); letter-spacing: 0.1em; }
+        .gift-guide-banner-hint { font-size: 11px; color: var(--light); margin-top: 4px; }
+        
+        /* 以茶寄意 - 弹窗 */
+        .gift-guide-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); display: none; flex-direction: column; z-index: 300; overflow-y: auto; }
+        .gift-guide-modal.show { display: flex; }
+        .gift-guide-header { position: sticky; top: 0; background: var(--bg); padding: 20px; text-align: center; border-bottom: 1px solid rgba(212, 182, 138, 0.2); z-index: 1; }
+        .gift-guide-close { position: absolute; top: 15px; right: 15px; width: 36px; height: 36px; background: rgba(212, 182, 138, 0.15); border: 1px solid rgba(212, 182, 138, 0.3); border-radius: 50%; font-size: 20px; color: var(--light); cursor: pointer; }
+        .gift-guide-title { font-size: 22px; color: var(--dark); letter-spacing: 0.2em; font-family: "STSong", serif; }
+        .gift-guide-subtitle { font-size: 13px; color: var(--light); margin-top: 6px; }
+        .gift-guide-content { padding: 25px 20px 50px; }
+        .gift-guide-section { margin-bottom: 25px; }
+        .gift-guide-section-label { font-size: 14px; color: var(--dark); margin-bottom: 12px; letter-spacing: 0.1em; }
+        .gift-guide-options { display: flex; flex-wrap: wrap; gap: 10px; }
+        .gift-guide-option { padding: 10px 18px; background: rgba(212, 182, 138, 0.1); border: 1px solid rgba(212, 182, 138, 0.3); border-radius: 20px; font-size: 14px; color: var(--dark); cursor: pointer; transition: all 0.2s; }
+        .gift-guide-option.selected { background: var(--gold); color: white; border-color: var(--gold); }
+        .gift-guide-result { display: none; margin-top: 25px; padding: 20px; background: rgba(255, 255, 255, 0.8); border-radius: 16px; border: 1px solid rgba(212, 182, 138, 0.3); }
+        .gift-guide-result.show { display: block; }
+        .gift-guide-result-title { font-size: 16px; color: var(--dark); letter-spacing: 0.15em; font-family: "STSong", serif; margin-bottom: 15px; text-align: center; }
+        .gift-guide-card { display: flex; gap: 15px; align-items: center; }
+        .gift-guide-card-img { width: 70px; height: 70px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
+        .gift-guide-card-info { flex: 1; min-width: 0; }
+        .gift-guide-card-name { font-size: 16px; color: var(--dark); letter-spacing: 0.15em; font-family: "STSong", serif; }
+        .gift-guide-card-tea { font-size: 12px; color: var(--light); margin: 4px 0; }
+        .gift-guide-card-reason { font-size: 12px; color: var(--dark); line-height: 1.5; opacity: 0.8; }
+        .gift-guide-action { margin-top: 25px; text-align: center; }
+        .gift-guide-btn { padding: 14px 40px; background: linear-gradient(145deg, var(--gold), #C4A67A); border: none; border-radius: 25px; font-size: 15px; color: white; cursor: pointer; letter-spacing: 0.1em; }
+
         .form-submit-btn { width: 100%; padding: 16px 30px; font-size: 16px; color: rgba(20, 20, 20, 0.9); background: linear-gradient(145deg, rgba(232, 213, 183, 0.98), rgba(212, 182, 138, 0.98)); border: none; border-radius: 30px; cursor: pointer; letter-spacing: 0.2em; margin-top: 20px; }
 
         /* 分享容器 */
@@ -1350,6 +1396,11 @@
             <button class="result-btn btn-share" onclick="shareResult()">分享茶运</button>
             <button class="result-btn btn-contact-gold" onclick="contactUs()">结缘此茶</button>
         </div>
+        <div class="gift-guide-banner" onclick="openGiftGuide()">
+            <div class="gift-guide-banner-icon">🎁</div>
+            <div class="gift-guide-banner-text">不知道选哪款？以茶寄意</div>
+            <div class="gift-guide-banner-hint">根据关系与场景，为你推荐</div>
+        </div>
     </div>
 
     <!-- ========== 二林 ========== -->
@@ -1456,6 +1507,50 @@
             <div class="h5-qr-section">
                 <img src="https://jason-wang66.github.io/nanshantie/qr.png" alt="H5">
                 <div class="h5-qr-hint">长按识别 · 进入南山</div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 以茶寄意 - 送礼推荐弹窗 -->
+    <div class="gift-guide-modal" id="giftGuideModal">
+        <div class="gift-guide-header">
+            <button class="gift-guide-close" onclick="closeGiftGuide()">×</button>
+            <div class="gift-guide-title">以茶寄意</div>
+            <div class="gift-guide-subtitle">选择关系与场景，为你推荐</div>
+        </div>
+        <div class="gift-guide-content">
+            <div class="gift-guide-section">
+                <div class="gift-guide-section-label">选择关系</div>
+                <div class="gift-guide-options" id="relationOptions">
+                    <button class="gift-guide-option" data-value="长辈">长辈</button>
+                    <button class="gift-guide-option" data-value="朋友">朋友</button>
+                    <button class="gift-guide-option" data-value="客户">客户</button>
+                    <button class="gift-guide-option" data-value="恋人">恋人</button>
+                    <button class="gift-guide-option" data-value="自己">自己</button>
+                </div>
+            </div>
+            <div class="gift-guide-section">
+                <div class="gift-guide-section-label">选择场景</div>
+                <div class="gift-guide-options" id="occasionOptions">
+                    <button class="gift-guide-option" data-value="节日">节日</button>
+                    <button class="gift-guide-option" data-value="生日">生日</button>
+                    <button class="gift-guide-option" data-value="拜访">拜访</button>
+                    <button class="gift-guide-option" data-value="日常">日常</button>
+                </div>
+            </div>
+            <div class="gift-guide-result" id="giftGuideResult">
+                <div class="gift-guide-result-title" id="giftResultName"></div>
+                <div class="gift-guide-card">
+                    <img class="gift-guide-card-img" id="giftResultImg" src="" alt="">
+                    <div class="gift-guide-card-info">
+                        <div class="gift-guide-card-name" id="giftResultTea"></div>
+                        <div class="gift-guide-card-reason" id="giftResultReason"></div>
+                    </div>
+                </div>
+                <div class="gift-guide-action">
+                    <button class="gift-guide-btn" onclick="contactUs()">咨询结缘</button>
+                </div>
             </div>
         </div>
     </div>
@@ -2512,6 +2607,59 @@
                 }, 'image/png');
             } catch (e) {
                 showToast('分享生成失败，请截图分享');
+            }
+        }
+
+
+        // 送礼推荐
+        function openGiftGuide() {
+            document.getElementById('giftGuideModal').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeGiftGuide() {
+            document.getElementById('giftGuideModal').classList.remove('show');
+            document.body.style.overflow = '';
+        }
+        const giftData = {
+            '长辈-节日': { name: '履霜', tea: '工夫红茶', reason: '冬日暖意，醇厚甘甜，适合长辈品茗习惯', img: 'https://bai-cha.coze.cn/images/履霜.jpg' },
+            '长辈-生日': { name: '桂兰', tea: '肉桂', reason: '岩骨花香，回味悠长，送长辈的品味之选', img: 'https://bai-cha.coze.cn/images/桂兰.jpg' },
+            '长辈-拜访': { name: '听枞', tea: '老枞', reason: '岁月滋味，山场气韵，拜访长辈的郑重之礼', img: 'https://bai-cha.coze.cn/images/听枞.jpg' },
+            '长辈-日常': { name: '履霜', tea: '工夫红茶', reason: '日常品饮，温润养胃，陪伴每一天', img: 'https://bai-cha.coze.cn/images/履霜.jpg' },
+            '朋友-节日': { name: '不器', tea: '白牡丹', reason: '清新雅致，节日相聚的应景之选', img: 'https://bai-cha.coze.cn/images/不器.jpg' },
+            '朋友-生日': { name: '步止', tea: '12年白茶', reason: '岁月珍藏，情谊沉淀，生日的心意之礼', img: 'https://bai-cha.coze.cn/images/步止.jpg' },
+            '朋友-拜访': { name: '丹桂', tea: '桂花红茶', reason: '花香馥郁，分享一杯的轻松好礼', img: 'https://bai-cha.coze.cn/images/丹桂.jpg' },
+            '朋友-日常': { name: '莫离', tea: '茉莉银针', reason: '清香怡人，年轻人的第一杯好茶', img: 'https://bai-cha.coze.cn/images/莫离.jpg' },
+            '客户-节日': { name: '无羁', tea: '17年白茶', reason: '稀缺老茶，彰显诚意的商务礼遇', img: 'https://bai-cha.coze.cn/images/无羁.jpg' },
+            '客户-生日': { name: '南山', tea: '21马饼', reason: '限量珍藏，高端定制的客户之礼', img: 'https://bai-cha.coze.cn/images/南山.jpg' },
+            '客户-拜访': { name: '天香', tea: '大红袍', reason: '岩茶上品，拜访客户的体面之选', img: 'https://bai-cha.coze.cn/images/天香.jpg' },
+            '客户-日常': { name: '半见', tea: '陈皮白茶', reason: '陈香醇滑，日常维护客户关系', img: 'https://bai-cha.coze.cn/images/半见.jpg' },
+            '恋人-节日': { name: '步止', tea: '12年白茶', reason: '岁月相守，情人节的浪漫之礼', img: 'https://bai-cha.coze.cn/images/步止.jpg' },
+            '恋人-生日': { name: '莫离', tea: '茉莉银针', reason: '茉莉如你，温柔清雅的心意', img: 'https://bai-cha.coze.cn/images/莫离.jpg' },
+            '恋人-拜访': { name: '不器', tea: '白牡丹', reason: '清新相遇，适合见面时的小小心意', img: 'https://bai-cha.coze.cn/images/不器.jpg' },
+            '恋人-日常': { name: '漱月', tea: '茉莉红茶', reason: '甜蜜日常，最长情的陪伴', img: 'https://bai-cha.coze.cn/images/漱月.jpg' },
+            '自己-节日': { name: '无羁', tea: '17年白茶', reason: '犒赏自己，岁月不负有心人', img: 'https://bai-cha.coze.cn/images/无羁.jpg' },
+            '自己-生日': { name: '步止', tea: '12年白茶', reason: '生辰快乐，值得一杯好茶', img: 'https://bai-cha.coze.cn/images/步止.jpg' },
+            '自己-拜访': { name: '浮岚', tea: '福建高山绿茶', reason: '清新一刻，犒赏自己的小确幸', img: 'https://bai-cha.coze.cn/images/浮岚.jpg' },
+            '自己-日常': { name: '漱雪', tea: '茉莉绿茶', reason: '日常口粮茶，简单纯粹', img: 'https://bai-cha.coze.cn/images/漱雪.jpg' }
+        };
+        document.querySelectorAll('.gift-guide-option').forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.closest('.gift-guide-options').querySelectorAll('.gift-guide-option').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                checkGiftRecommendation();
+            });
+        });
+        function checkGiftRecommendation() {
+            const relation = document.querySelector('#relationOptions .gift-guide-option.selected');
+            const occasion = document.querySelector('#occasionOptions .gift-guide-option.selected');
+            if (relation && occasion) {
+                const key = relation.dataset.value + '-' + occasion.dataset.value;
+                const result = giftData[key] || giftData['朋友-日常'];
+                document.getElementById('giftResultName').textContent = result.name;
+                document.getElementById('giftResultTea').textContent = result.tea;
+                document.getElementById('giftResultReason').textContent = result.reason;
+                document.getElementById('giftResultImg').src = result.img;
+                document.getElementById('giftGuideResult').classList.add('show');
             }
         }
 
