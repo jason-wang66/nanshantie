@@ -745,6 +745,10 @@
         .brewing strong { color: var(--dark); }
         .result-img { width: 100%; max-width: 220px; margin: 18px auto; display: block; border-radius: 10px; box-shadow: 0 5px 20px rgba(139, 115, 85, 0.12); }
         .result-brand { text-align: center; font-size: 12px; color: var(--light); letter-spacing: 0.3em; margin-top: 18px; }
+        .result-h5-qr { text-align: center; padding: 24px 20px 40px; }
+        .result-h5-qr-title { font-size: 12px; color: rgba(166,146,114,0.8); letter-spacing: 0.3em; margin-bottom: 14px; }
+        .result-h5-qr-img { width: 120px; height: 120px; border-radius: 10px; box-shadow: 0 4px 16px rgba(139,115,85,0.18); margin: 0 auto; display: block; }
+        .result-h5-qr-hint { font-size: 11px; color: rgba(166,146,114,0.6); letter-spacing: 0.2em; margin-top: 10px; }
         
         /* 签文页故事区域 */
         .result-story {
@@ -1615,6 +1619,11 @@
         </div>
     </div>
 
+        <div class="result-h5-qr">
+            <div class="result-h5-qr-title">长按识别 · 进入南山</div>
+            <img class="result-h5-qr-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAhIAAAISAQAAAACxRhsSAAAFXElEQVR4nO2dXYrrOBBGT40N/ehALyBLUXZ2mSXNDuylZAEN8mODTc2DVJIc+vYd6MRjTOkhJLZzsKAo1c9nWZSfjumvHyPAGc5whjNOwJgljxuryG3O35guAKzpJMw9cgPStzz6592HM5zx29ED3QKAQKcyXRUmAWDtYYgK8/sigOh0+eiBDsIIML8/6T6c4Yw/M7JjnEUIEeRX7JRwf1PCXURuw6fAsADzm+oI6WK5Pfk+nOGMr0f/8Fth7XW6IITxU5iuikyXDxRQQryIMsSn34cznPHfGZ3KDSBE0L/lTRsfKxdIMWuIr74PZzjjK4aqLuVQp3IbVOVXBIKqMl06VY2ryK8IcgNgUIsAjjUXZ5yVUTJ6AObePsrPcO+R2/ymQKfp2CQiycceai7OOCejh6GU+meAYUGZIQWpKXsaPkWn64JOV/v25PtwhjO+Haqxy0YXdEFHQMdknSUWGFRTaJBC00HLP1R1PMpcnHFeBppGzEGqmW2XDifbVV2S7arGzi6O9l+3U2e8nJEMLqVLDKrJRWr6uZB9p52wVN9MeaRzO3XGPoxUvxdRjasAa86oQuxyXYpZRMe5J10cIug4fEo22wPNxRknZdjaPagSYqd5eTd/msOAQTXHrHSNy3V/6oydGGgdyVhLQKqWVuXrksVuYoFkwEeZizPOy8i+M8TOIlBdGh+bEqfREvzkQPPI7tXt1BmvZ1CtzvJ9cgRa/WkoYUBa6GsEEN1OnbEHo4lA088RaCLQutqHWr/axLFup854PSO39oNVSAl1PYff+VP1upQzdmU0dX7zmF0uk4ZU07eFvvWn2YDz2aPMxRnnZbT+tDalxnTOcqaUUVm+ZZe4P3XGbgyT9BWPWRZ1iwCsZZWGpVCN2bqdOuPljJxHVQlKTfoBkisdgcaVNoUAt1Nn7MJo49P2WNFGgTVKgUYqhWVUbqfOeD2DJtpsPGuz+Fcdip2oCZbXpZyxD8NqoFa1TwfDJunfeNauXAzeN3XGToyy7ps/hdwerbkVmGE2vdRGoHKUuTjjvIxG+pxGKZPWfL/6U8ue6t89j3LGHoxGh5KzokHLkg+1C9X406yrMlG126kzXs7oYX5fYFiQcBc03PsF6BZhWHqdbm8qQVfJz/vNgjL3C9Plo9fpEp90H85wxrej7UfZt3RihKKcUvOnRS/V6P+OMhdnnJfx2N+3pN8e1xupLSvNKqlUtRrU+6bO2IvRdvVVN+K+ojDNT6CobipUVk51O3XGPoy8q1TeFKWIoMvz+6r3N2USEaZrqfiXnVEONRdnnJPR5vtNJVWrLGVpNHwpeq2Rquv6nLEPY5s9FaXJo+q0NACszt+WqY4yF2ecl7F58rmo+LUm88OyyaPAHG1Vpx5lLs44L6Oo81vBaas+Kc+bhk0eZa1Vt1Nn7MGw+LTk+8UctdlVyqTUzS5p1am6nTrj5YxmT4nGY2696MNzJyZC9TzKGbsxtkV8bRV+efGv+/XVvXysAeD+1Bn7MHhoRX2V5W/2P82pVhr+3Ikz9mG0+0vVzU1HoN1N8ispf/T9T52xG4MH6SmNJhpoAtJGqhLLlj2+7jtjF8bmfXzz+6Kwik5XRYKCJFH/P4JO0qmkt/AByryKPu8+nOGM70Z6r4lkY11FmS8Q7v2SxKXpDZKDQhKhzu8qeSvfbiFEf2+kM/ZgNBvyt1m+lf2b0mnt75e6lNf5nbETY2undnCbOFHkU9bfB9sB3eNTZ+zHeHCb6ZWRIa7CdP2UpqGaXnF22TxEfbC5OOOMjE2+H62NWneQqlvz55pqrbguXud3xl4My9l/MKajzMUZznCGM/5Pxr+dcePI9aufswAAAABJRU5ErkJggg==" alt="南山帖H5二维码">
+            <div class="result-h5-qr-hint">扫码体验南山帖 · 品味十二客</div>
+        </div>
     <!-- ========== 二林 ========== -->
     <div class="page erlin-page" id="erlinPage">
         <div class="erlin-header">
