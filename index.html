@@ -2477,14 +2477,29 @@
                 if (imgEl && imgEl.src && imgEl.complete) {
                     try {
                         const imgW = 180, imgH = 180;
-                        ctx.drawImage(imgEl, (W - imgW)/2, H - 320, imgW, imgH);
+                        ctx.drawImage(imgEl, (W - imgW)/2, H - 400, imgW, imgH);
                     } catch(e) {}
+                }
+
+                // H5二维码
+                const qrImg = new Image();
+                qrImg.src = 'https://jason-wang66.github.io/nanshantie/qr.png';
+                if (qrImg.complete) {
+                    ctx.drawImage(qrImg, (W - 80)/2, H - 250, 80, 80);
+                    ctx.fillStyle = '#A69272';
+                    ctx.font = '10px "STSong", serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('长按识别 · 进入南山', W/2, H - 175);
+                    ctx.font = '9px "STSong", serif';
+                    ctx.fillStyle = 'rgba(212, 182, 138, 0.6)';
+                    ctx.fillText('山间还有一客未至', W/2, H - 158);
+                    ctx.textAlign = 'left';
                 }
 
                 // 底部品牌
                 ctx.fillStyle = '#A69272';
                 ctx.font = '12px "STSong", serif';
-                ctx.fillText('扫码添加客服 · 品味南山', W/2, H - 50);
+                ctx.fillText('长按识别 · 进入南山', W/2, H - 50);
                 
                 // 预告文字
                 ctx.fillStyle = 'rgba(212, 182, 138, 0.6)';
