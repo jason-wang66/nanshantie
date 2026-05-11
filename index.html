@@ -2620,15 +2620,24 @@
             document.getElementById('giftGuideModal').classList.remove('show');
             document.body.style.overflow = '';
         }
-        function getProductImage(productName) {
-            if (typeof PRODUCTS !== 'undefined') {
-                const product = PRODUCTS.find(p => p.name === productName);
-                if (product && product.image) {
-                    return product.image;
-                }
-            }
-            return 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#F5F0E6" width="70" height="70"/><text x="35" y="40" text-anchor="middle" fill="#A69272" font-size="12">南山帖</text></svg>');
-        }
+        // 产品图片映射（内嵌图片）
+        const giftProductImages = {
+            '履霜': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>',
+            '桂兰': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>',
+            '听枞': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>',
+            '不器': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>',
+            '步止': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>',
+            '丹桂': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>',
+            '莫离': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>',
+            '无羁': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>',
+            '南山': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>',
+            '天香': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>',
+            '半见': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>',
+            '浮岚': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>',
+            '漱雪': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>',
+            '漱月': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>'
+        };
+        
         const giftData = {
             '长辈-节日': { name: '履霜', tea: '工夫红茶', reason: '冬日暖意，醇厚甘甜，适合长辈品茗习惯' },
             '长辈-生日': { name: '桂兰', tea: '肉桂', reason: '岩骨花香，回味悠长，送长辈的品味之选' },
@@ -2667,7 +2676,13 @@
                 document.getElementById('giftResultName').textContent = result.name;
                 document.getElementById('giftResultTea').textContent = result.tea;
                 document.getElementById('giftResultReason').textContent = result.reason;
-                document.getElementById('giftResultImg').src = getProductImage(result.name);
+                // 使用内嵌图片或从PRODUCTS查找
+                if (giftProductImages[result.name]) {
+                    document.getElementById('giftResultImg').src = giftProductImages[result.name];
+                } else if (typeof PRODUCTS !== 'undefined') {
+                    const p = PRODUCTS.find(x => x.name === result.name);
+                    if (p && p.image) document.getElementById('giftResultImg').src = p.image;
+                }
                 document.getElementById('giftGuideResult').classList.add('show');
             }
         }
