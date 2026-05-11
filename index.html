@@ -2477,7 +2477,7 @@
                 if (imgEl && imgEl.src && imgEl.complete) {
                     try {
                         const imgW = 180, imgH = 180;
-                        ctx.drawImage(imgEl, (W - imgW)/2, H - 400, imgW, imgH);
+                        ctx.drawImage(imgEl, (W - imgW)/2, H - 460, imgW, imgH);
                     } catch(e) {}
                 }
 
@@ -2489,22 +2489,14 @@
                     ctx.fillStyle = '#A69272';
                     ctx.font = '10px "STSong", serif';
                     ctx.textAlign = 'center';
-                    ctx.fillText('长按识别 · 进入南山', W/2, H - 175);
+                    ctx.fillText('长按识别 · 进入南山', W/2, H - 160);
                     ctx.font = '9px "STSong", serif';
                     ctx.fillStyle = 'rgba(212, 182, 138, 0.6)';
-                    ctx.fillText('山间还有一客未至', W/2, H - 158);
+                    ctx.fillText('山间还有一客未至', W/2, H - 145);
                     ctx.textAlign = 'left';
                 }
 
-                // 底部品牌
-                ctx.fillStyle = '#A69272';
-                ctx.font = '12px "STSong", serif';
-                ctx.fillText('长按识别 · 进入南山', W/2, H - 50);
-                
-                // 预告文字
-                ctx.fillStyle = 'rgba(212, 182, 138, 0.6)';
-                ctx.font = '10px "STSong", serif';
-                ctx.fillText('山间还有一客未至。', W/2, H - 28);
+                // 底部提示已移到二维码下方
 
                 // 生成图片
                 canvas.toBlob(function(blob) {
