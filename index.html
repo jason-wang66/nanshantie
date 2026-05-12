@@ -2621,22 +2621,11 @@
             document.body.style.overflow = '';
         }
         // 产品图片映射（内嵌图片）
-        const giftProductImages = {
-            '履霜': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>',
-            '桂兰': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>',
-            '听枞': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>',
-            '不器': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>',
-            '步止': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>',
-            '丹桂': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>',
-            '莫离': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>',
-            '无羁': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>',
-            '南山': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>',
-            '天香': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>',
-            '半见': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>',
-            '浮岚': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>',
-            '漱雪': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>',
-            '漱月': '<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect fill="#D4B68A" width="70" height="70" rx="8"/><text x="35" y="42" text-anchor="middle" fill="#5C4A3A" font-size="14" font-family="serif">茶</text></svg>'
-        };
+        // 动态从PRODUCTS获取产品图
+        function getProductImage(productName) {
+            const product = PRODUCTS.find(p => p.name === productName);
+            return product ? product.image : '';
+        }
         
         const giftData = {
             '长辈-节日': { name: '履霜', tea: '工夫红茶', reason: '冬日暖意，醇厚甘甜，适合长辈品茗习惯' },
@@ -2677,8 +2666,9 @@
                 document.getElementById('giftResultTea').textContent = result.tea;
                 document.getElementById('giftResultReason').textContent = result.reason;
                 // 使用内嵌图片或从PRODUCTS查找
-                if (giftProductImages[result.name]) {
-                    document.getElementById('giftResultImg').src = giftProductImages[result.name];
+                const img = getProductImage(result.name);
+                if (img) {
+                    document.getElementById('giftResultImg').src = img;
                 } else if (typeof PRODUCTS !== 'undefined') {
                     const p = PRODUCTS.find(x => x.name === result.name);
                     if (p && p.image) document.getElementById('giftResultImg').src = p.image;
